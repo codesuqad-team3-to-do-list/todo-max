@@ -1,6 +1,6 @@
 ---
-name: issue_template
-about: Describe this issue template's purpose here.
+name: "✨ FEATURE"
+about: Feature 이슈 생성 시 작성해주세요.
 title: "[BE/FE]"
 labels: ''
 assignees: ''
