@@ -21,6 +21,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["src", "src/svg.d.ts"],
+  "include": ["src", "src/types/svg.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

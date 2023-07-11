@@ -1,0 +1,15 @@
+import { useState } from 'react';
+
+interface Props {
+  token?: string;
+}
+
+export default function Main({}: Props) {
+  const [columns, setColumns] = useState<Columns>();
+
+  const onCardMove = () => {};
+  const onColumnTitleRename = () => {};
+  const onColumnRemove = () => {};
+
+  return;
+}
