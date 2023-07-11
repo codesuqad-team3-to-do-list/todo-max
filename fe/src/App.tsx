@@ -1,3 +1,11 @@
+import Button from './components/Button';
+import Card from './components/Card';
+
 export default function App() {
-  return <div>hello world!</div>;
+  return (
+    <div>
+      <Button />
+      <Card />
+    </div>
+  );
 }

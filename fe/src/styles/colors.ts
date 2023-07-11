@@ -1,0 +1,30 @@
+const colorVowel = {
+  blue: '#007AFF',
+  navy: '#0025E6',
+  red: '#FF3B30',
+  gray50: '#FEFEFE',
+  gray100: '#F7F7FC',
+  gray200: '#EFF0F6',
+  gray300: '#D9DBE9',
+  gray400: '#BEC1D5',
+  gray500: '#A0A3BD',
+  gray600: '#6E7191',
+  gray700: '#4E4B66',
+  gray800: '#2A2A44',
+  gray900: '#14142B',
+};
+
+export const colors = {
+  textStrong: colorVowel.gray900,
+  textBold: colorVowel.gray800,
+  textWeak: colorVowel.gray600,
+  textWhiteDefault: colorVowel.gray50,
+  textWhiteWeak: colorVowel.gray100,
+  textBrand: colorVowel.blue,
+  textDanger: colorVowel.red,
+  surfaceDefault: colorVowel.gray50,
+  surfaceAlt: colorVowel.gray100,
+  surfaceBrand: colorVowel.blue,
+  borderDefault: colorVowel.gray200,
+  background: '#ffffff',
+};
