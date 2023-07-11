@@ -16,8 +16,9 @@ const colorVowel = {
 
 export const colors = {
   textStrong: colorVowel.gray900,
-  textBold: colorVowel.gray800,
-  textWeak: colorVowel.gray600,
+  textBold: colorVowel.gray700,
+  textDefault: colorVowel.gray600,
+  textWeak: colorVowel.gray500,
   textWhiteDefault: colorVowel.gray50,
   textWhiteWeak: colorVowel.gray100,
   textBrand: colorVowel.blue,
@@ -25,6 +26,7 @@ export const colors = {
   surfaceDefault: colorVowel.gray50,
   surfaceAlt: colorVowel.gray100,
   surfaceBrand: colorVowel.blue,
+  surfaceDanger: colorVowel.red,
   borderDefault: colorVowel.gray200,
   background: '#ffffff',
 };
