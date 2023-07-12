@@ -1,4 +1,4 @@
-package com.todo.app.domain.column.entity;
+package com.todo.app.domain.column.domain;
 
 public class Card {
 

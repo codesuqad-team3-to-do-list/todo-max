@@ -1,6 +1,6 @@
 package com.todo.app.domain.column.controller.response;
 
-import com.todo.app.domain.column.entity.Card;
+import com.todo.app.domain.column.domain.Card;
 
 public class CardResponse {
 

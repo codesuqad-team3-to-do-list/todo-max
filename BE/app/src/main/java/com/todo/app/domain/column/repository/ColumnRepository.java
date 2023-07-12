@@ -1,6 +1,6 @@
 package com.todo.app.domain.column.repository;
 
-import com.todo.app.domain.column.entity.Column;
+import com.todo.app.domain.column.domain.Column;
 import java.util.List;
 
 public interface ColumnRepository {

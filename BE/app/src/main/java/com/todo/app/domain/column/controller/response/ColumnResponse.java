@@ -1,6 +1,6 @@
 package com.todo.app.domain.column.controller.response;
 
-import com.todo.app.domain.column.entity.Column;
+import com.todo.app.domain.column.domain.Column;
 import java.util.List;
 import java.util.stream.Collectors;
 

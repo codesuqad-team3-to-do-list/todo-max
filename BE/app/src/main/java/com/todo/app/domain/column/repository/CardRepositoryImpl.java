@@ -1,8 +1,10 @@
 package com.todo.app.domain.column.repository;
 
-import com.todo.app.domain.column.entity.Card;
+import com.todo.app.domain.column.domain.Card;
+import com.todo.app.domain.column.entity.CardEntity;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -25,11 +27,14 @@ public class CardRepositoryImpl implements CardRepository {
                 + "WHERE card.deleted = 0 "
                 + "AND member_id = :memberId";
 
-        return template.query(sql, Map.of("memberId", memberId), cardRowMapper());
+        return template.query(sql, Map.of("memberId", memberId), cardRowMapper())
+                .stream()
+                .map(CardEntity::toDomain)
+                .collect(Collectors.toList());
     }
 
-    private RowMapper<Card> cardRowMapper() {
-        return (rs, rowNum) -> new Card(
+    private RowMapper<CardEntity> cardRowMapper() {
+        return (rs, rowNum) -> new CardEntity(
                 rs.getLong("id"),
                 rs.getLong("tdl_column_id"),
                 rs.getString("title"),

@@ -1,6 +1,8 @@
-package com.todo.app.domain.column.entity;
+package com.todo.app.domain.column.domain;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Column {
 
@@ -33,5 +35,17 @@ public class Column {
 
     public List<Card> getCards() {
         return cards;
+    }
+
+    public void matchCards(List<Card> cards) {
+        List<Card> temp = new ArrayList<>();
+
+        for (Card card : cards) {
+            if (Objects.equals(id, card.getColumnId())) {
+                temp.add(card);
+            }
+        }
+
+        this.cards = temp;
     }
 }
