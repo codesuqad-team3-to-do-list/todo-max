@@ -1,18 +1,47 @@
+const grey50 = '#FEFEFE';
+const grey100 = '#F7F7FC';
+const grey200 = '#EFF0F6';
+const grey300 = '#D9DBE9';
+const grey400 = '#BEC1D5';
+const grey500 = '#A0A3BD';
+const grey600 = '#6E7191';
+const grey700 = '#4E4B66';
+const grey800 = '#2A2A44';
+const grey900 = '#14142B';
+const blue = '#007AFF';
+const navy = '#0025E6';
+const red = '#FF3B30';
+
 export const designSystem = {
   colors: {
-    grey50: '#FEFEFE',
-    grey100: '#F7F7FC',
-    grey200: '#EFF0F6',
-    grey300: '#D9DBE9',
-    grey400: '#BEC1D5',
-    grey500: '#A0A3BD',
-    grey600: '#6E7191',
-    grey700: '#4E4B66',
-    grey800: '#2A2A44',
-    grey900: '#14142B',
-    blue: '#007AFF',
-    navy: '#0025E6',
-    red: '#FF3B30',
+    grey50,
+    grey100,
+    grey200,
+    grey300,
+    grey400,
+    grey500,
+    grey600,
+    grey700,
+    grey800,
+    grey900,
+    blue,
+    navy,
+    red,
+  },
+  colorSystem: {
+    textStrong: grey900,
+    textBold: grey700,
+    textDefault: grey600,
+    textWeak: grey500,
+    textWhiteDefault: grey50,
+    textWhiteWeak: grey100,
+    textBrand: blue,
+    textDanger: red,
+    surfaceDefault: grey50,
+    surfaceAlt: grey100,
+    surfaceBrand: blue,
+    surfaceDanger: red,
+    borderDefault: grey200,
   },
   opacity: {
     hover: 0.8,
