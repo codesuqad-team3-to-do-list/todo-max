@@ -7,8 +7,8 @@ public class ApiResponse<T> {
     private int statusCode;
     private T message;
 
-    public ApiResponse(int statusCode, T message) {
-        this.statusCode = statusCode;
+    public ApiResponse(HttpStatus status, T message) {
+        this.statusCode = status.value();
         this.message = message;
     }
 
@@ -21,6 +21,6 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> success(HttpStatus status, T message) {
-        return new ApiResponse<>(status.value(), message);
+        return new ApiResponse<>(status, message);
     }
 }
