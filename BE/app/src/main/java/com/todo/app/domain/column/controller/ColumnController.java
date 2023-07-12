@@ -3,6 +3,7 @@ package com.todo.app.domain.column.controller;
 import com.todo.app.common.ApiResponse;
 import com.todo.app.domain.column.controller.response.ColumnResponse;
 import com.todo.app.domain.column.service.ColumnService;
+import com.todo.app.domain.column.service.ColumnServiceImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
