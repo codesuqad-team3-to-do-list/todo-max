@@ -1,5 +1,6 @@
 package com.todo.app.domain.column.service;
 
+import com.todo.app.common.exception.ResourceNotFoundException;
 import com.todo.app.domain.column.domain.Card;
 import com.todo.app.domain.column.domain.Column;
 import com.todo.app.domain.column.repository.CardRepository;
@@ -27,7 +28,7 @@ public class ColumnService {
         for (Column column : columns) {
             column.matchCards(cards);
         }
-        
+
         return columns;
     }
 
