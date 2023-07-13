@@ -3,7 +3,6 @@ package com.todo.app.domain.column.controller;
 import com.todo.app.common.ApiResponse;
 import com.todo.app.domain.column.controller.response.ColumnResponse;
 import com.todo.app.domain.column.service.ColumnService;
-import com.todo.app.domain.column.service.ColumnServiceImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,8 @@ public class ColumnController {
 
     @GetMapping("/api/columns")
     public ApiResponse<List<ColumnResponse>> readColumns() {
-        List<ColumnResponse> columnResponses = columnService.readAll(1L).stream()// TODO: 로그인 기능 구현 후 readAll() 파라미터 수정 필요
+        List<ColumnResponse> columnResponses = columnService.readAll(1L)
+                .stream()// TODO: 로그인 기능 구현 후 readAll() 파라미터 수정 필요
                 .map(ColumnResponse::from)
                 .collect(Collectors.toList());
         return ApiResponse.success(HttpStatus.OK, columnResponses);
