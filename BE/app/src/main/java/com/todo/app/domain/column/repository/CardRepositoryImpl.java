@@ -2,6 +2,7 @@ package com.todo.app.domain.column.repository;
 
 import com.todo.app.domain.column.domain.Card;
 import com.todo.app.domain.column.domain.CardCreate;
+import com.todo.app.domain.column.domain.CardUpdate;
 import com.todo.app.domain.column.entity.CardEntity;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,15 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
+    public Card update(CardUpdate card, Long columnId) {
+
+        String sql = "UPDATE tdl_card SET title = :title, content = :content WHERE id = :id";
+        template.update(sql, mappingUdateCardSqlParameterSource(card));
+
+        return new Card(card.getId(), columnId, card.getTitle(), card.getContent(), "web");
+    }
+
+    @Override
     public List<Card> findAllBy(Long memberId) {
         String sql = "SELECT card.id, tdl_column_id, card.title, content, author "
                 + "FROM tdl_card card "
@@ -63,6 +73,13 @@ public class CardRepositoryImpl implements CardRepository {
     private SqlParameterSource mappingCreateCardSqlParameterSource(CardCreate card) {
         return new MapSqlParameterSource()
                 .addValue("tdlColumnId", card.getColumnId())
+                .addValue("title", card.getTitle())
+                .addValue("content", card.getContent());
+    }
+
+    private SqlParameterSource mappingUdateCardSqlParameterSource(CardUpdate card) {
+        return new MapSqlParameterSource()
+                .addValue("id", card.getId())
                 .addValue("title", card.getTitle())
                 .addValue("content", card.getContent());
     }

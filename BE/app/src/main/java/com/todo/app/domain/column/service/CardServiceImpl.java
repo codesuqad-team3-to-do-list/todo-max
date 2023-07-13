@@ -2,6 +2,7 @@ package com.todo.app.domain.column.service;
 
 import com.todo.app.domain.column.domain.Card;
 import com.todo.app.domain.column.domain.CardCreate;
+import com.todo.app.domain.column.domain.CardUpdate;
 import com.todo.app.domain.column.repository.CardRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,10 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card create(CardCreate card) {
         return cardRepository.save(card);
+    }
+
+    @Override
+    public Card update(CardUpdate card, Long columnId) {
+        return cardRepository.update(card, columnId);
     }
 }
