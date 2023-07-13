@@ -1,12 +1,17 @@
 package com.todo.app.domain.column.repository;
 
 import com.todo.app.domain.column.domain.Card;
+import com.todo.app.domain.column.domain.CardCreate;
 import com.todo.app.domain.column.entity.CardEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,6 +21,18 @@ public class CardRepositoryImpl implements CardRepository {
 
     public CardRepositoryImpl(NamedParameterJdbcTemplate template) {
         this.template = template;
+    }
+
+    @Override
+    public Card save(CardCreate card) {
+
+        String sql = "INSERT INTO tdl_card(tdl_column_id, title, content) "
+                + "VALUES(:tdlColumnId, :title, :content)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        template.update(sql, mappingCreateCardSqlParameterSource(card), keyHolder);
+
+        return new Card(keyHolder.getKey().longValue(), card.getColumnId(), card.getTitle(), card.getContent(), "web");
     }
 
     @Override
@@ -41,5 +58,12 @@ public class CardRepositoryImpl implements CardRepository {
                 rs.getString("content"),
                 rs.getString("author")
         );
+    }
+
+    private SqlParameterSource mappingCreateCardSqlParameterSource(CardCreate card) {
+        return new MapSqlParameterSource()
+                .addValue("tdlColumnId", card.getColumnId())
+                .addValue("title", card.getTitle())
+                .addValue("content", card.getContent());
     }
 }
