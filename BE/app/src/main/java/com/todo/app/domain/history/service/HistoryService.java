@@ -1,6 +1,6 @@
 package com.todo.app.domain.history.service;
 
-import com.todo.app.domain.column.repository.RedisCacheRepository;
+import com.todo.app.domain.history.repository.RedisCacheRepository;
 import com.todo.app.domain.history.entity.History;
 import com.todo.app.domain.history.repository.HistoryRepository;
 import java.util.List;

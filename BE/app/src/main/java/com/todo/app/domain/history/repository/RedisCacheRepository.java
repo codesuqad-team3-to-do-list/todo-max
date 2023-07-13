@@ -1,4 +1,4 @@
-package com.todo.app.domain.column.repository;
+package com.todo.app.domain.history.repository;
 
 import com.todo.app.domain.history.entity.History;
 import java.util.Collections;
