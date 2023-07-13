@@ -32,4 +32,14 @@ button {
   border: 0;
   background: transparent;
   cursor: pointer;
+}
+input {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }`;
