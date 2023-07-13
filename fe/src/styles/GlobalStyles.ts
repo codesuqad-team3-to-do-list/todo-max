@@ -33,7 +33,7 @@ button {
   background: transparent;
   cursor: pointer;
 }
-input {
+input, textarea {
   margin: 0;
   padding: 0;
   border: none;
@@ -42,4 +42,5 @@ input {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  resize: none;
 }`;
