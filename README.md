@@ -11,7 +11,7 @@
 | 프론트엔드 | 프론트엔드 | 백엔드 | 백엔드 | 백엔드 | 벡엔드 |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | <img src="https://avatars.githubusercontent.com/u/57666791?v=4" width="180" height="180"/>| <img src="https://avatars.githubusercontent.com/u/101464713?v=4" width="180" height="180"/> | <img src="https://avatars.githubusercontent.com/u/57752068?v=4" width="180" height="180"/> | <img src="https://avatars.githubusercontent.com/u/108214590?v=4" width="180" height="180"/> | <img src="https://avatars.githubusercontent.com/u/121915790?v=4" width="180" height="180"/> | <img src="https://avatars.githubusercontent.com/u/86359180?v=4" width="180" height="180"/> |
-| **[Khundi](https://github.com/jsh3418)** | **[TOKO](https://github.com/aaaz425)** | **[Bean (BE)](https://github.com/tjdqls1200)** | **[Jinny](https://github.com/jinny-l)** | **[Joy](https://github.com/he2joojo)** | **[Ape](https://github.com/crtEvent)** |
+| **[Khundi](https://github.com/jsh3418)** | **[TOKO](https://github.com/aaaz425)** | **[Bean](https://github.com/tjdqls1200)** | **[Jinny](https://github.com/jinny-l)** | **[Joy](https://github.com/he2joojo)** | **[Ape](https://github.com/crtEvent)** |
 
 ## 🖥️ 동작 화면
 
