@@ -35,8 +35,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, ?> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
         // Redis key와 value를 JSON 문자열로 직렬화하는 Serializer 설정
