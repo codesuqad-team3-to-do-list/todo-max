@@ -46,6 +46,15 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
+    public void delete(Long cardId) {
+        String sql = "UPDATE tdl_card "
+                + "SET deleted = 1 "
+                + "WHERE id = :cardId";
+
+        template.update(sql, Map.of("cardId", cardId));
+    }
+
+    @Override
     public List<Card> findAllBy(Long memberId) {
         String sql = "SELECT card.id, tdl_column_id, card.title, content, author "
                 + "FROM tdl_card card "

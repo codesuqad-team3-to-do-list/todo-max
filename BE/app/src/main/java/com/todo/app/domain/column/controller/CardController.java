@@ -44,4 +44,14 @@ public class CardController {
         );
     }
 
+    @DeleteMapping("/api/columns/{columnId}/cards/{cardId}")
+    public ApiResponse<String> deleteCard(@PathVariable Long columnId, @PathVariable Long cardId) {
+        cardService.delete(cardId);
+
+        return ApiResponse.success(
+                HttpStatus.OK,
+                HttpStatus.OK.getReasonPhrase()
+        );
+    }
+
 }

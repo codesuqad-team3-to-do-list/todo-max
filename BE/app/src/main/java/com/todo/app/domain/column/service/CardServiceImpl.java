@@ -24,4 +24,9 @@ public class CardServiceImpl implements CardService {
     public Card update(CardUpdate card, Long columnId) {
         return cardRepository.update(card, columnId);
     }
+
+    @Override
+    public void delete(Long cardId) {
+        cardRepository.delete(cardId);
+    }
 }

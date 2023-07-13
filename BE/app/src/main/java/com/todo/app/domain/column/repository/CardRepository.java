@@ -12,4 +12,6 @@ public interface CardRepository {
     Card save(CardCreate card);
 
     Card update(CardUpdate card, Long columnId);
+
+    void delete(Long cardId);
 }
