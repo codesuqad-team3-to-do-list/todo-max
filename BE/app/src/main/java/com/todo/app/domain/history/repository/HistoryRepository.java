@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface HistoryRepository {
     void saveAll(List<History> histories);
+
+    List<History> findHistories(Long memberId, Long historyId, int count);
 }

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
+import org.springframework.data.redis.core.RedisHash;
 
+@RedisHash("history")
 public class History {
     private Long id;
     private Long memberId;
@@ -27,6 +29,16 @@ public class History {
         this.action = action;
         this.cardTitle = cardTitle;
         this.actionDatetime = LocalDateTime.now();
+    }
+
+    public History(Long id, String action, String cardTitle, String prevColumnTitle, String currentColumnTitle,
+                   LocalDateTime actionDatetime) {
+        this.id = id;
+        this.action = action;
+        this.cardTitle = cardTitle;
+        this.prevColumnTitle = prevColumnTitle;
+        this.currentColumnTitle = currentColumnTitle;
+        this.actionDatetime = actionDatetime;
     }
 
     public History(Long memberId, String action, String cardTitle, String prevColumnTitle, String currentColumnTitle) {

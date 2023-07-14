@@ -24,6 +24,12 @@ public class HistoryService {
         redisCacheRepository.saveHistory(history);
     }
 
+    @Transactional(readOnly = true)
+    public List<History> findHistories(Long historyId, int count) {
+
+        return historyRepository.findHistories(1L, historyId, count);
+    }
+
     @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     public void saveAll() {
         List<History> histories = redisCacheRepository.findAllHistory();
