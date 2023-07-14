@@ -13,9 +13,14 @@ type Props = {
   type?: Type;
 };
 
-export default function Card({ type = 'default' }: Props) {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+export default function Card({
+  id,
+  title,
+  content,
+}: Props) {
+  const [type, setType] = useState<Type>('default');
+  const [titleInput, setTitleInput] = useState('');
+  const [bodyTextArea, setBodyTextArea] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -31,7 +36,7 @@ export default function Card({ type = 'default' }: Props) {
     textareaRef.current.style.height = `${
       scrollHeight + borderTop + borderBottom
     }px`;
-  }, [body]);
+  }, [bodyTextArea]);
 
   return (
     <StyledCard type={type}>
@@ -41,16 +46,16 @@ export default function Card({ type = 'default' }: Props) {
             {type === 'add' || type === 'edit' ? (
               <>
                 <StyledTitleInput
-                  value={title}
+                  value={titleInput}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setTitle(event.target.value)
+                    setTitleInput(event.target.value)
                   }
                   placeholder="제목을 입력하세요"
                 />
                 <StyledBodyTextarea
-                  value={body}
+                  value={bodyTextArea}
                   onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                    setBody(event.target.value)
+                    setBodyTextArea(event.target.value)
                   }
                   placeholder="내용을 입력하세요"
                   ref={textareaRef}
@@ -58,8 +63,8 @@ export default function Card({ type = 'default' }: Props) {
               </>
             ) : (
               <>
-                <StyledTitle>GitHub 공부하기</StyledTitle>
-                <StyledBody>add, commit, push</StyledBody>
+                <StyledTitle>{title}</StyledTitle>
+                <StyledBody>{content}</StyledBody>
               </>
             )}
           </StyledContent>
