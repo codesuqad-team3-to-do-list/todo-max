@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface Props {
-  token?: string;
+  token: string | null;
 }
 
 export default function Main({}: Props) {
@@ -10,6 +10,4 @@ export default function Main({}: Props) {
   const onCardMove = () => {};
   const onColumnTitleRename = () => {};
   const onColumnRemove = () => {};
-
-  return;
 }
