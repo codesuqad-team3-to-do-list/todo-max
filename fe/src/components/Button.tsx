@@ -1,14 +1,16 @@
 import styled from 'styled-components';
-import PlusIcon from './PlusIcon';
-import { designSystem } from '../styles/designSystem';
+import ClosedIcon from './ClosedIcon';
+import EditIcon from './EditIcon';
 
+type Type = 'contained' | 'ghost';
+type Role = 'confirm' | 'edit' | 'delete' | 'close' | 'cancel';
 type States = 'enabled' | 'disabled' | 'hover';
-type Type = 'confirm' | 'delete' | 'cancel';
 
 interface Props {
+  type?: Type;
   elementPattern?: 'iconOnly' | 'textOnly' | 'iconText';
   states?: States;
-  type?: Type;
+  role?: Role;
   text?: string;
   onClick?: () => void;
   width?: string;
@@ -18,7 +20,8 @@ interface Props {
 export default function Button({
   elementPattern = 'textOnly',
   states = 'enabled',
-  type = 'confirm',
+  type = 'contained',
+  role = 'confirm',
   text,
   onClick,
   width,
@@ -28,13 +31,17 @@ export default function Button({
     <StyledButton
       states={states}
       type={type}
+      role={role}
       onClick={onClick}
       width={width}
       height={height}
     >
-      {(elementPattern === 'iconOnly' || elementPattern === 'iconText') && (
-        <PlusIcon width={16} fill={designSystem.colorSystem.textWhiteDefault} />
-      )}
+      {(elementPattern === 'iconOnly' || elementPattern === 'iconText') &&
+        (role === 'close' ? (
+          <ClosedIcon width={'16px'} />
+        ) : role === 'edit' ? (
+          <EditIcon />
+        ) : null)}
       {(elementPattern === 'textOnly' || elementPattern === 'iconText') && (
         <StyledText>{text}</StyledText>
       )}
@@ -45,6 +52,7 @@ export default function Button({
 interface ButtonProps {
   states: States;
   type: Type;
+  role?: Role;
   width?: string;
   height?: string;
 }
@@ -53,15 +61,17 @@ const StyledButton = styled.button<ButtonProps>`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   background-color: ${(props) =>
-    props.type === 'confirm'
+    props.type === 'ghost'
+      ? 'rgba(0, 0, 0, 0)'
+      : props.role === 'confirm'
       ? props.theme.colorSystem.surfaceBrand
-      : props.type === 'delete'
+      : props.role === 'delete'
       ? props.theme.colorSystem.surfaceDanger
       : props.theme.colorSystem.surfaceAlt};
 
   font: ${(props) => props.theme.font.displayBold14};
   color: ${(props) =>
-    props.type === 'confirm' || props.type === 'delete'
+    props.role === 'confirm' || props.role === 'delete'
       ? props.theme.colorSystem.textWhiteDefault
       : props.theme.colorSystem.textDefault};
   opacity: ${(props) =>
