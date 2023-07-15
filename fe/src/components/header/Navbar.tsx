@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import historyIcon from '../../assets/history-icon.svg';
 import { styled } from 'styled-components';
+import { Link } from 'react-router-dom';
 
 interface Props {
   isLogin: boolean;
@@ -13,7 +14,11 @@ export default function Navbar({ isLogin }: Props) {
 
   return (
     <StyledNavbar>
-      {<StyledButton>{isLogin ? <a>로그아웃</a> : <a>로그인</a>}</StyledButton>}
+      {
+        <StyledButton>
+          {isLogin ? <a>로그아웃</a> : <Link to={'/'}>로그인</Link>}
+        </StyledButton>
+      }
       <StyledButton>
         <img src={historyIcon} />
       </StyledButton>
