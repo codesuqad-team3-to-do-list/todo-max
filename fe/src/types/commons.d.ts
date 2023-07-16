@@ -11,3 +11,17 @@ interface Card {
   title: string;
   content: string;
 }
+
+interface History {
+  histories: HistoryItem[];
+  hasNext: true;
+}
+
+interface HistoryItem {
+  id: number;
+  action: 'CREATE' | 'MOVE' | 'MODIFY' | 'DELETE';
+  cardTitle: string;
+  previousColumnTitle?: string;
+  currentColumnTitle?: string;
+  actionDatetime: string;
+}

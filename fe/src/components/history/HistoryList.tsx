@@ -1,9 +1,15 @@
 import HistoryItem from './HistoryItem';
 
-export default function HistoryList() {
+interface Props {
+  histories: HistoryItem[];
+}
+
+export default function HistoryList({ histories }: Props) {
   return (
     <>
-      <HistoryItem />
+      {histories.map((history) => (
+        <HistoryItem {...history} />
+      ))}
     </>
   );
 }
