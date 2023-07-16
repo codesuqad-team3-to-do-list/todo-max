@@ -10,4 +10,6 @@ export default function Main({}: Props) {
   const onCardMove = () => {};
   const onColumnTitleRename = () => {};
   const onColumnRemove = () => {};
+
+  return <></>;
 }
