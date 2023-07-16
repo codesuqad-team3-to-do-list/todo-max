@@ -26,5 +26,8 @@
     "styled-reset": "^4.5.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.0"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
