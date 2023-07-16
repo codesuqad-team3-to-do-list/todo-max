@@ -6,25 +6,35 @@ export default function HistoryItem() {
       <div>
         <StyledProfile src="https://avatars.githubusercontent.com/u/57666791?v=4" />
       </div>
-      <div>
+      <StyledBody>
         <StyledUserName>@멋진삼</StyledUserName>
         <StyledContent>
           블로그에 포스팅할 것을(를) 하고있는 일에서 해야할 일으로
           이동하였습니다.
         </StyledContent>
         <StyledTimeStamp>3분 전</StyledTimeStamp>
-      </div>
+      </StyledBody>
     </StyledHistory>
   );
 }
 
-const StyledHistory = styled.div``;
+const StyledHistory = styled.div`
+  display: flex;
+  padding: 16px;
+  gap: 16px;
+`;
 
 const StyledProfile = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   border: 1px solid ${(props) => props.theme.colors.grey200};
+`;
+
+const StyledBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const StyledUserName = styled.div`
