@@ -13,11 +13,7 @@ type Props = {
   type?: Type;
 };
 
-export default function Card({
-  id,
-  title,
-  content,
-}: Props) {
+export default function Card({ id, title, content }: Props) {
   const [type, setType] = useState<Type>('default');
   const [titleInput, setTitleInput] = useState('');
   const [bodyTextArea, setBodyTextArea] = useState('');
@@ -73,15 +69,17 @@ export default function Card({
           )}
           {(type === 'add' || type === 'edit') && (
             <StyledButtonContainer>
-              <Button text="취소" type="cancel" width="100%" />
+              <Button text="취소" role="cancel" width="100%" />
               <Button text="등록" width="100%" />
             </StyledButtonContainer>
           )}
         </StyledTextArea>
-        <StyledIconArea>
-          <ClosedIcon />
-          <EditIcon />
-        </StyledIconArea>
+        {type !== 'add' && type !== 'edit' && (
+          <StyledIconArea>
+            <ClosedIcon />
+            <EditIcon />
+          </StyledIconArea>
+        )}
       </StyledCardContainer>
     </StyledCard>
   );
@@ -111,7 +109,7 @@ const StyledCardContainer = styled.div`
 `;
 
 const StyledTextArea = styled.div`
-  width: 240px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
