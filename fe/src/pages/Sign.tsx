@@ -67,6 +67,7 @@ export default function Sign({ type }: Props) {
           ? '올바른 비밀번호를 입력해주세요'
           : ''}
       </StyledValidInfo>
+
       <StyledSignUpLink to={'/sign-up'}>
         <Button
           role="sign-up"
@@ -76,6 +77,7 @@ export default function Sign({ type }: Props) {
           shadow="up"
         />
       </StyledSignUpLink>
+
       <Button
         text="로그인"
         height="50px"
