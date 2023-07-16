@@ -4,7 +4,15 @@ import EditIcon from './EditIcon';
 import PlusIcon from './PlusIcon';
 
 type Type = 'contained' | 'ghost';
-type Role = 'confirm' | 'add' | 'edit' | 'delete' | 'close' | 'cancel';
+type Role =
+  | 'confirm'
+  | 'add'
+  | 'edit'
+  | 'delete'
+  | 'close'
+  | 'cancel'
+  | 'sign-up';
+type Shadow = 'normal' | 'up' | 'floating';
 
 interface Props {
   type?: Type;
@@ -15,6 +23,7 @@ interface Props {
   width?: string;
   height?: string;
   disabled?: boolean;
+  shadow?: Shadow;
 }
 
 export default function Button({
@@ -26,6 +35,7 @@ export default function Button({
   width,
   height,
   disabled,
+  shadow,
 }: Props) {
   return (
     <StyledButton
@@ -35,6 +45,7 @@ export default function Button({
       width={width}
       height={height}
       disabled={disabled}
+      shadow={shadow}
     >
       {(elementPattern === 'iconOnly' || elementPattern === 'iconText') &&
         (role === 'close' ? (
@@ -57,6 +68,7 @@ interface ButtonProps {
   width?: string;
   height?: string;
   disabled?: boolean;
+  shadow?: Shadow;
 }
 
 const StyledButton = styled.button<ButtonProps>`
@@ -75,6 +87,14 @@ const StyledButton = styled.button<ButtonProps>`
     props.role === 'confirm' || props.role === 'delete'
       ? props.theme.colorSystem.textWhiteDefault
       : props.theme.colorSystem.textDefault};
+  box-shadow: ${(props) =>
+    props.shadow === 'normal'
+      ? props.theme.objectStyles.dropShadow.normal
+      : props.shadow === 'up'
+      ? props.theme.objectStyles.dropShadow.up
+      : props.shadow === 'floating'
+      ? props.theme.objectStyles.dropShadow.floating
+      : null};
   padding: 8px;
   border-radius: 8px;
   display: flex;
