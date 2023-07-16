@@ -72,8 +72,10 @@ const StyledButton = styled.button<ButtonProps>`
       : props.theme.colorSystem.surfaceAlt};
   font: ${(props) => props.theme.font.displayBold14};
   color: ${(props) =>
-    props.role === 'confirm' || props.role === 'delete'
+    props.role === 'confirm'
       ? props.theme.colorSystem.textWhiteDefault
+      : props.role === 'delete'
+      ? props.theme.colorSystem.textDanger
       : props.theme.colorSystem.textDefault};
   padding: 8px;
   border-radius: 8px;

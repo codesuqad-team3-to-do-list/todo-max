@@ -71,7 +71,7 @@ export default function HistoryItem({
         <StyledProfile src="https://avatars.githubusercontent.com/u/57666791?v=4" />
       </div>
       <StyledBody>
-        <StyledUserName>@멋진삼</StyledUserName>
+        <StyledUserName>@멋진쿤토</StyledUserName>
         {content}
         <StyledTimeStamp>{formattedTimeDifference}</StyledTimeStamp>
       </StyledBody>

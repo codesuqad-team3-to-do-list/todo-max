@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function History({ onClose, onDeleteAll }: Props) {
-  const [history, setHistory] = useState<History>();
+  const [histories, setHistories] = useState<History>();
 
   const fetchHistory = async () => {
     const historyId = 1;
@@ -19,7 +19,7 @@ export default function History({ onClose, onDeleteAll }: Props) {
     );
     const data = await response.json();
 
-    setHistory(data);
+    setHistories(data.message);
   };
 
   useEffect(() => {
@@ -38,16 +38,21 @@ export default function History({ onClose, onDeleteAll }: Props) {
           onClick={onClose}
         />
       </StyledHistoryTitleArea>
-      {history?.histories && <HistoryList histories={history?.histories} />}
-
-      {history?.histories.length !== 0 && (
-        <Button
-          type="ghost"
-          elementPattern="textOnly"
-          role="delete"
-          text="기록 전체 삭제"
-          onClick={onDeleteAll}
-        />
+      {histories ? (
+        <HistoryList histories={histories.histories} />
+      ) : (
+        <StyledNoHistory>사용자 활동 기록이 없습니다.</StyledNoHistory>
+      )}
+      {histories?.length !== 0 && (
+        <StyledButtonContainer>
+          <Button
+            type="ghost"
+            elementPattern="textOnly"
+            role="delete"
+            text="기록 전체 삭제"
+            onClick={onDeleteAll}
+          />
+        </StyledButtonContainer>
       )}
     </StyledHistory>
   );
@@ -62,10 +67,29 @@ const StyledHistory = styled.div`
 
 const StyledHistoryTitleArea = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 8px 8px 8px 16px;
   gap: 4px;
 
   .title {
     font: ${(props) => props.theme.font.displayBold16};
   }
+`;
+
+const StyledNoHistory = styled.div`
+  width: 350px;
+  padding: 16px;
+  gap: 4px;
+  color: ${(props) => props.theme.colorSystem.textWeak};
+  text-align: center;
+  font: ${(props) => props.theme.font.displayMD16};
+`;
+
+const StyledButtonContainer = styled.div`
+  display: flex;
+  padding: 4px 8px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
 `;

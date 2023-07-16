@@ -8,7 +8,7 @@ export default function HistoryList({ histories }: Props) {
   return (
     <>
       {histories.map((history) => (
-        <HistoryItem {...history} />
+        <HistoryItem key={history.id} {...history} />
       ))}
     </>
   );
