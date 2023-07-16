@@ -1,40 +1,49 @@
 import styled from 'styled-components';
+import ClosedIcon from './ClosedIcon';
+import EditIcon from './EditIcon';
 import PlusIcon from './PlusIcon';
-import { designSystem } from '../styles/designSystem';
 
-type States = 'enabled' | 'disabled' | 'hover';
-type Type = 'confirm' | 'delete' | 'cancel';
+type Type = 'contained' | 'ghost';
+type Role = 'confirm' | 'add' | 'edit' | 'delete' | 'close' | 'cancel';
 
 interface Props {
-  elementPattern?: 'iconOnly' | 'textOnly' | 'iconText';
-  states?: States;
   type?: Type;
+  elementPattern?: 'iconOnly' | 'textOnly' | 'iconText';
+  role?: Role;
   text?: string;
   onClick?: () => void;
   width?: string;
   height?: string;
+  disabled?: boolean;
 }
 
 export default function Button({
   elementPattern = 'textOnly',
-  states = 'enabled',
-  type = 'confirm',
+  type = 'contained',
+  role = 'confirm',
   text,
   onClick,
   width,
   height,
+  disabled,
 }: Props) {
   return (
     <StyledButton
-      states={states}
       type={type}
+      role={role}
       onClick={onClick}
       width={width}
       height={height}
+      disabled={disabled}
     >
-      {(elementPattern === 'iconOnly' || elementPattern === 'iconText') && (
-        <PlusIcon width={16} fill={designSystem.colorSystem.textWhiteDefault} />
-      )}
+      {(elementPattern === 'iconOnly' || elementPattern === 'iconText') &&
+        (role === 'close' ? (
+          <ClosedIcon width={'16px'} />
+        ) : role === 'edit' ? (
+          <EditIcon />
+        ) : role === 'add' ? (
+          <PlusIcon />
+        ) : null)}
       {(elementPattern === 'textOnly' || elementPattern === 'iconText') && (
         <StyledText>{text}</StyledText>
       )}
@@ -43,33 +52,29 @@ export default function Button({
 }
 
 interface ButtonProps {
-  states: States;
   type: Type;
+  role?: Role;
   width?: string;
   height?: string;
+  disabled?: boolean;
 }
 
 const StyledButton = styled.button<ButtonProps>`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   background-color: ${(props) =>
-    props.type === 'confirm'
+    props.type === 'ghost'
+      ? 'rgba(0, 0, 0, 0)'
+      : props.role === 'confirm'
       ? props.theme.colorSystem.surfaceBrand
-      : props.type === 'delete'
+      : props.role === 'delete'
       ? props.theme.colorSystem.surfaceDanger
       : props.theme.colorSystem.surfaceAlt};
-
   font: ${(props) => props.theme.font.displayBold14};
   color: ${(props) =>
-    props.type === 'confirm' || props.type === 'delete'
+    props.role === 'confirm' || props.role === 'delete'
       ? props.theme.colorSystem.textWhiteDefault
       : props.theme.colorSystem.textDefault};
-  opacity: ${(props) =>
-    props.states === 'hover'
-      ? props.theme.opacity.hover
-      : props.states === 'disabled'
-      ? props.theme.opacity.disabled
-      : 1};
   padding: 8px;
   border-radius: 8px;
   display: flex;
@@ -78,6 +83,10 @@ const StyledButton = styled.button<ButtonProps>`
 
   &:hover {
     opacity: ${(props) => props.theme.opacity.hover};
+  }
+
+  &:disabled {
+    opacity: ${(props) => props.theme.opacity.disabled};
   }
 `;
 
