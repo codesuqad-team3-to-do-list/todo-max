@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
     private final JwtRepository jwtRepository;
+    private final JwtProvider jwtProvider = new JwtProvider();
 
     public JwtService(JwtRepository jwtRepository) {
         this.jwtRepository = jwtRepository;
@@ -24,14 +25,17 @@ public class JwtService {
             throw new IllegalPasswordException(member.getId());
         }
 
-        JwtProvider jwtProvider = new JwtProvider();
-        Map<String, Object> accessClaims = Map.of("memberId", member.getId());
-
-        Jwt jwt = jwtProvider.createJwt(accessClaims);
+        Jwt jwt = jwtProvider.createJwt(generateMemberClaims(member));
 
         jwtRepository.saveRefreshToken(jwt.getRefreshToken(), member.getId());
 
         return jwt;
+    }
+
+    private Map<String, Object> generateMemberClaims(Member member) {
+        return Map.of(
+                "id", member.getId()
+        );
     }
 
     private boolean verifyPassword(Member member, String password) {
