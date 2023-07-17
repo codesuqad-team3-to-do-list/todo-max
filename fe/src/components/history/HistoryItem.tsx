@@ -34,7 +34,8 @@ export default function HistoryItem({
         return (
           <StyledContent>
             <StyledBold>{cardTitle}</StyledBold>을(를){' '}
-            <StyledBold>컬럼네임</StyledBold>에 등록하였습니다.
+            {/* <StyledBold>컬럼네임</StyledBold>에 등록하였습니다. */}
+            등록하였습니다.
           </StyledContent>
         );
 
