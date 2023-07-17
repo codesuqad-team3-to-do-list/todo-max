@@ -1,12 +1,10 @@
 package com.todo.app.common.aop.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todo.app.common.exception.IllegalJwtTokenException;
+import com.todo.app.common.ApiResponse;
+import com.todo.app.common.exception.JwtExceptionType;
 import com.todo.app.domain.jwt.entity.JwtProvider;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,6 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.util.PatternMatchUtils;
 
 public class JwtAuthorizationFilter implements Filter {
@@ -45,20 +44,18 @@ public class JwtAuthorizationFilter implements Filter {
             return;
         }
 
+        ((HttpServletResponse) response).setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+
         try {
             String token = getToken(httpServletRequest);
             Claims claims = jwtProvider.getClaims(token);
-            request.setAttribute("memberId", claims.get("memberId"));
+            request.setAttribute("memberId", claims.get("memberId")); // TODO: 닉네임을 사용한다면 nickname을 추가로 보내 주거나 멤버 response 객체를 하나 만들면 좋을 듯
             chain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
-            throw new IllegalJwtTokenException("기한이 만료되었습니다.");
-        } catch (MalformedJwtException e) {
-            throw new IllegalJwtTokenException("잘못된 형식의 토큰입니다.");
-        } catch (SignatureException e) {
-            throw new IllegalJwtTokenException("잘못된 키입니다.");
-        } catch (IllegalArgumentException e) {
-            throw new IllegalJwtTokenException("잘못된 값이 들어왔습니다.");
-        } // TODO: 예외를 ApiResponse에 담아서 반환하도록 처리해야 합니다.
+        } catch (RuntimeException e) {
+            sendErrorApiResponse(response, e);
+        }
     }
 
     private boolean whiteListCheck(String uri){
@@ -73,6 +70,24 @@ public class JwtAuthorizationFilter implements Filter {
     private String getToken(HttpServletRequest request){
         String authorization = request.getHeader("Authorization");
         return authorization.substring(7);
+    }
+
+    private void sendErrorApiResponse(ServletResponse response, RuntimeException e) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        ((HttpServletResponse) response).setStatus(HttpStatus.UNAUTHORIZED.value());
+
+        response.getWriter().write(
+                objectMapper.writeValueAsString(
+                        generateErrorApiResponse(e))
+        );
+    }
+
+    private ApiResponse<String> generateErrorApiResponse(RuntimeException e) {
+        JwtExceptionType jwtExceptionType = JwtExceptionType.from(e);
+        return ApiResponse.exception(
+                jwtExceptionType.getHttpStatus(),
+                jwtExceptionType.getMessage());
     }
 
 }
