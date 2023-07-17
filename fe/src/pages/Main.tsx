@@ -12,5 +12,5 @@ export default function Main({}: Props) {
   const onColumnTitleRename = () => {};
   const onColumnRemove = () => {};
 
-  return <History />;
+  return <></>;
 }

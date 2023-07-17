@@ -2,6 +2,7 @@ import { useState } from 'react';
 import historyIcon from '../../assets/history-icon.svg';
 import { styled } from 'styled-components';
 import { Link } from 'react-router-dom';
+import History from '../history/History';
 
 interface Props {
   isLogin: boolean;
@@ -23,6 +24,7 @@ export default function Navbar({ isLogin }: Props) {
       <StyledButton onClick={onToggleOpenHistory}>
         <img src={historyIcon} />
       </StyledButton>
+      {isOpenHistory && <History />}
     </StyledNavbar>
   );
 }
@@ -36,4 +38,5 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   cursor: pointer;
+  position: relative;
 `;

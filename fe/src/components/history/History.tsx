@@ -63,6 +63,9 @@ const StyledHistory = styled.div`
   padding: 8px;
   border-radius: ${(props) => props.theme.objectStyles.radius.m};
   box-shadow: ${(props) => props.theme.objectStyles.dropShadow.floating};
+  position: absolute;
+  top: 20px;
+  right: 0;
 `;
 
 const StyledHistoryTitleArea = styled.div`
