@@ -26,7 +26,11 @@ public class JwtService {
         JwtProvider jwtProvider = new JwtProvider();
         Map<String, Object> accessClaims = Map.of("memberId", member.getId());
 
-        return jwtProvider.createJwt(accessClaims);
+        Jwt jwt = jwtProvider.createJwt(accessClaims);
+
+        jwtRepository.saveRefreshToken(jwt.getRefreshToken(), member.getId());
+
+        return jwt;
     }
 
     private boolean verifyPassword(Member member, String password) {

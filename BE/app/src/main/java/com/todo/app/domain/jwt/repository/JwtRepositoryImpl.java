@@ -21,6 +21,12 @@ public class JwtRepositoryImpl implements JwtRepository {
         return template.queryForObject(sql, Map.of("email", email), memberRowMapper());
     }
 
+    public void saveRefreshToken(String refreshToken, Long memberId) {
+        String sql = "INSERT INTO refresh_token(refresh_token, member_id) VALUE (:refreshToken, :memberId)";
+
+        template.update(sql, Map.of("refreshToken", refreshToken, "memberId", memberId));
+    }
+
     private RowMapper<Member> memberRowMapper() {
         return (rs, rowNum) -> new Member(
           rs.getLong("id"),
