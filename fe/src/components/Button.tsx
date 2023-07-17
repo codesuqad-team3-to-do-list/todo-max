@@ -1,117 +1,94 @@
-import styled from 'styled-components';
-import ClosedIcon from './ClosedIcon';
-import EditIcon from './EditIcon';
-import PlusIcon from './PlusIcon';
+import { ButtonHTMLAttributes } from 'react';
+import { styled } from 'styled-components';
+import { designSystem } from '../styles/designSystem';
 
-type Type = 'contained' | 'ghost';
-type Role =
-  | 'confirm'
-  | 'add'
-  | 'edit'
-  | 'delete'
-  | 'close'
-  | 'cancel'
-  | 'sign-up';
-type Shadow = 'normal' | 'up' | 'floating';
+type ButtonVariant = 'blue' | 'red' | 'gray' | 'transparent';
+type ButtonPattern = 'text' | 'icon';
 
-interface Props {
-  type?: Type;
-  elementPattern?: 'iconOnly' | 'textOnly' | 'iconText';
-  role?: Role;
-  text?: string;
-  onClick?: () => void;
-  width?: string;
-  height?: string;
-  disabled?: boolean;
-  shadow?: Shadow;
+type Variant = {
+  color: string;
+  background: string;
+};
+
+type Variants = {
+  blue: Variant;
+  red: Variant;
+  gray: Variant;
+  transparent: Variant;
+};
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  pattern: ButtonPattern;
+  iconHoverColor?: string;
 }
 
 export default function Button({
-  elementPattern = 'textOnly',
-  type = 'contained',
-  role = 'confirm',
-  text,
-  onClick,
-  width,
-  height,
-  disabled,
-  shadow,
-}: Props) {
+  variant = 'transparent',
+  pattern,
+  iconHoverColor = designSystem.colorSystem.surfaceBrand,
+  children,
+  ...props
+}: ButtonProps) {
+  const VARIANTS: Variants = {
+    blue: {
+      color: designSystem.colorSystem.textWhiteDefault,
+      background: designSystem.colorSystem.surfaceBrand,
+    },
+    red: {
+      color: designSystem.colorSystem.textWhiteDefault,
+      background: designSystem.colorSystem.surfaceDanger,
+    },
+    gray: {
+      color: designSystem.colorSystem.textDefault,
+      background: designSystem.colorSystem.surfaceAlt,
+    },
+    transparent: {
+      color: designSystem.colorSystem.textDefault,
+      background: 'none',
+    },
+  };
+
   return (
     <StyledButton
-      type={type}
-      role={role}
-      onClick={onClick}
-      width={width}
-      height={height}
-      disabled={disabled}
-      shadow={shadow}
+      {...{ VARIANTS, variant, pattern, iconHoverColor }}
+      {...props}
     >
-      {(elementPattern === 'iconOnly' || elementPattern === 'iconText') &&
-        (role === 'close' ? (
-          <ClosedIcon width={'16px'} />
-        ) : role === 'edit' ? (
-          <EditIcon />
-        ) : role === 'add' ? (
-          <PlusIcon />
-        ) : null)}
-      {(elementPattern === 'textOnly' || elementPattern === 'iconText') && (
-        <StyledText>{text}</StyledText>
-      )}
+      {children}
     </StyledButton>
   );
 }
 
-interface ButtonProps {
-  type: Type;
-  role?: Role;
-  width?: string;
-  height?: string;
-  disabled?: boolean;
-  shadow?: Shadow;
+interface StyledButtonProps {
+  VARIANTS: Variants;
+  variant: ButtonVariant;
+  pattern: ButtonPattern;
+  iconHoverColor?: string;
 }
 
-const StyledButton = styled.button<ButtonProps>`
-  width: ${(props) => props.width};
-  height: ${(props) => props.height};
-  background-color: ${(props) =>
-    props.type === 'ghost'
-      ? 'rgba(0, 0, 0, 0)'
-      : props.role === 'confirm'
-      ? props.theme.colorSystem.surfaceBrand
-      : props.role === 'delete'
-      ? props.theme.colorSystem.surfaceDanger
-      : props.theme.colorSystem.surfaceAlt};
-  font: ${(props) => props.theme.font.displayBold14};
-  color: ${(props) =>
-    props.role === 'confirm' || props.role === 'delete'
-      ? props.theme.colorSystem.textWhiteDefault
-      : props.theme.colorSystem.textDefault};
-  box-shadow: ${(props) =>
-    props.shadow === 'normal'
-      ? props.theme.objectStyles.dropShadow.normal
-      : props.shadow === 'up'
-      ? props.theme.objectStyles.dropShadow.up
-      : props.shadow === 'floating'
-      ? props.theme.objectStyles.dropShadow.floating
-      : null};
-  padding: 8px;
-  border-radius: 8px;
+const StyledButton = styled.button<StyledButtonProps>`
+  width: ${(props) => (props.pattern === 'text' ? '132px' : 'auto')};
+  height: ${(props) => (props.pattern === 'text' ? '32px' : 'auto')};
+  outline: none;
+  padding: 4px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  color: ${(props) => props.VARIANTS[props.variant].color};
+  background: ${(props) => props.VARIANTS[props.variant].background};
+  border-radius: ${(props) => props.theme.objectStyles.radius.s};
 
   &:hover {
-    opacity: ${(props) => props.theme.opacity.hover};
+    opacity: 0.8;
+
+    & svg,
+    path {
+      fill: ${(props) => props.iconHoverColor};
+    }
   }
 
   &:disabled {
-    opacity: ${(props) => props.theme.opacity.disabled};
+    cursor: default;
+    opacity: 0.3;
   }
-`;
-
-const StyledText = styled.div`
-font: ${(props) => props.theme.font.displayBold14};
-color: ${(props) => props.theme.colors.textWhiteDefault}
-padding: 0px 4px;
 `;
