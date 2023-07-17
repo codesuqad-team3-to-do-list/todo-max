@@ -1,13 +1,13 @@
 package com.todo.app.domain.jwt.controller.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class LoginRequest {
 
-    private final String email;
-    private final String password;
+    private String email;
+    private String password;
 
-    public LoginRequest(@JsonProperty("email") String email, @JsonProperty("password") String password) {
+    public LoginRequest() {}
+
+    public LoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }
