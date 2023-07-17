@@ -1,5 +1,6 @@
 package com.todo.app.domain.jwt.service;
 
+import com.todo.app.common.exception.IllegalPasswordException;
 import com.todo.app.domain.jwt.entity.Jwt;
 import com.todo.app.domain.jwt.entity.JwtProvider;
 import com.todo.app.domain.jwt.entity.Member;
@@ -20,7 +21,7 @@ public class JwtService {
         Member member = jwtRepository.findBy(email);
 
         if(!verifyPassword(member, password)) {
-            throw new IllegalArgumentException("야야 왜?왜?");
+            throw new IllegalPasswordException(member.getId());
         }
 
         JwtProvider jwtProvider = new JwtProvider();
