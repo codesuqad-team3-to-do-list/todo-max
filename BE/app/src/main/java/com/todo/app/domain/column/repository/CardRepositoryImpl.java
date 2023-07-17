@@ -1,12 +1,18 @@
 package com.todo.app.domain.column.repository;
 
 import com.todo.app.domain.column.domain.Card;
+import com.todo.app.domain.column.domain.CardCreate;
+import com.todo.app.domain.column.domain.CardUpdate;
 import com.todo.app.domain.column.entity.CardEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,6 +22,36 @@ public class CardRepositoryImpl implements CardRepository {
 
     public CardRepositoryImpl(NamedParameterJdbcTemplate template) {
         this.template = template;
+    }
+
+    @Override
+    public Card save(CardCreate card) {
+
+        String sql = "INSERT INTO tdl_card(tdl_column_id, title, content) "
+                + "VALUES(:tdlColumnId, :title, :content)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        template.update(sql, mappingCreateCardSqlParameterSource(card), keyHolder);
+
+        return new Card(keyHolder.getKey().longValue(), card.getColumnId(), card.getTitle(), card.getContent(), "web");
+    }
+
+    @Override
+    public Card update(CardUpdate card, Long columnId) {
+
+        String sql = "UPDATE tdl_card SET title = :title, content = :content WHERE id = :id";
+        template.update(sql, mappingUdateCardSqlParameterSource(card));
+
+        return new Card(card.getId(), columnId, card.getTitle(), card.getContent(), "web");
+    }
+
+    @Override
+    public void delete(Long cardId) {
+        String sql = "UPDATE tdl_card "
+                + "SET deleted = 1 "
+                + "WHERE id = :cardId";
+
+        template.update(sql, Map.of("cardId", cardId));
     }
 
     @Override
@@ -41,5 +77,19 @@ public class CardRepositoryImpl implements CardRepository {
                 rs.getString("content"),
                 rs.getString("author")
         );
+    }
+
+    private SqlParameterSource mappingCreateCardSqlParameterSource(CardCreate card) {
+        return new MapSqlParameterSource()
+                .addValue("tdlColumnId", card.getColumnId())
+                .addValue("title", card.getTitle())
+                .addValue("content", card.getContent());
+    }
+
+    private SqlParameterSource mappingUdateCardSqlParameterSource(CardUpdate card) {
+        return new MapSqlParameterSource()
+                .addValue("id", card.getId())
+                .addValue("title", card.getTitle())
+                .addValue("content", card.getContent());
     }
 }
