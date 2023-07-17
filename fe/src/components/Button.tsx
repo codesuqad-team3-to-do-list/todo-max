@@ -111,7 +111,7 @@ const StyledButton = styled.button<ButtonProps>`
 `;
 
 const StyledText = styled.div`
-  font: ${(props) => props.theme.font.displayBold14};
-  color: ${(props) => props.theme.colors.textWhiteDefault}
-  padding: 0px 4px;
+font: ${(props) => props.theme.font.displayBold14};
+color: ${(props) => props.theme.colors.textWhiteDefault}
+padding: 0px 4px;
 `;
