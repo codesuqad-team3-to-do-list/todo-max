@@ -10,6 +10,7 @@ interface Props {
 export default function Navbar({ isLogin }: Props) {
   const [isOpenHistory, setIsOpenHistory] = useState(false);
 
+  const onToggleOpenHistory = () => setIsOpenHistory(!isOpenHistory);
   const onHistoryClose = () => {};
 
   return (
@@ -19,7 +20,7 @@ export default function Navbar({ isLogin }: Props) {
           {isLogin ? <a>로그아웃</a> : <Link to={'/'}>로그인</Link>}
         </StyledButton>
       }
-      <StyledButton>
+      <StyledButton onClick={onToggleOpenHistory}>
         <img src={historyIcon} />
       </StyledButton>
     </StyledNavbar>
