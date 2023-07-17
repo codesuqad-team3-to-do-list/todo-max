@@ -11,8 +11,8 @@ interface Props {
 export default function Navbar({ isLogin }: Props) {
   const [isOpenHistory, setIsOpenHistory] = useState(false);
 
-  const onToggleOpenHistory = () => setIsOpenHistory(!isOpenHistory);
-  const onHistoryClose = () => {};
+  const onOpenHistory = () => setIsOpenHistory(true);
+  const onCloseHistory = () => setIsOpenHistory(false);
 
   return (
     <StyledNavbar>
@@ -21,10 +21,10 @@ export default function Navbar({ isLogin }: Props) {
           {isLogin ? <a>로그아웃</a> : <Link to={'/'}>로그인</Link>}
         </StyledButton>
       }
-      <StyledButton onClick={onToggleOpenHistory}>
+      <StyledButton onClick={onOpenHistory}>
         <img src={historyIcon} />
       </StyledButton>
-      {isOpenHistory && <History />}
+      {isOpenHistory && <History onClose={onCloseHistory} />}
     </StyledNavbar>
   );
 }

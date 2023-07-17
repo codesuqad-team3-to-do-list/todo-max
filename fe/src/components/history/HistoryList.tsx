@@ -3,11 +3,30 @@ import HistoryItem from './HistoryItem';
 
 interface Props {
   histories: HistoryItem[];
+  onEndReach: () => void;
 }
 
-export default function HistoryList({ histories }: Props) {
+export default function HistoryList({ histories, onEndReach }: Props) {
+  function handleScroll(event: React.UIEvent<HTMLElement>) {
+    const historyList = event.target;
+
+    if (!(historyList instanceof HTMLElement)) {
+      return;
+    }
+
+    const scrollHeight = historyList.scrollHeight;
+    const scrollTop = historyList.scrollTop;
+    const clientHeight = historyList.clientHeight;
+
+    const isEndReached = scrollTop + clientHeight >= scrollHeight;
+
+    if (isEndReached) {
+      onEndReach();
+    }
+  }
+
   return (
-    <StyledHistoryList>
+    <StyledHistoryList onScroll={handleScroll}>
       {histories.map((history) => (
         <HistoryItem key={history.id} {...history} />
       ))}

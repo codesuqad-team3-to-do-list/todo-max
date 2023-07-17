@@ -4,19 +4,23 @@ import { useEffect, useState } from 'react';
 import Button from '../Button';
 
 interface Props {
-  onClose?: () => void;
+  onClose: () => void;
   onDeleteAll?: () => void;
 }
 
+type Toggle = 'close' | 'open';
+
 export default function History({ onClose, onDeleteAll }: Props) {
   const [histories, setHistories] = useState<History>();
+  const [toggleAnimation, setToggleAnimation] = useState<Toggle>('close');
 
   const fetchHistory = async () => {
-    const historyId = 1;
-    const count = 10;
-    const response = await fetch(
-      `api/histories?historyId=${historyId}&count=${count}`
-    );
+    const historyId = histories?.histories[histories.histories.length - 1]?.id;
+    const count = 5;
+    const url = historyId
+      ? `api/histories?historyId=${historyId}&count=${count}`
+      : 'api/histories';
+    const response = await fetch(url);
     const data = await response.json();
 
     setHistories(data.message);
@@ -24,10 +28,24 @@ export default function History({ onClose, onDeleteAll }: Props) {
 
   useEffect(() => {
     fetchHistory();
+    setToggleAnimation('open');
   }, []);
 
+  const onCloseHistory = () => {
+    setToggleAnimation('close');
+    document.addEventListener('transitionend', onClose, { once: true });
+  };
+
+  const fetchMoreHistories = () => {
+    if (!histories?.hasNext) {
+      return;
+    }
+
+    fetchHistory();
+  };
+
   return (
-    <StyledHistory>
+    <StyledHistory openanimation={toggleAnimation}>
       <StyledHistoryTitleArea>
         <div className="title">사용자 활동 기록</div>
         <Button
@@ -35,11 +53,14 @@ export default function History({ onClose, onDeleteAll }: Props) {
           elementPattern="iconText"
           role="close"
           text="닫기"
-          onClick={onClose}
+          onClick={onCloseHistory}
         />
       </StyledHistoryTitleArea>
       {histories ? (
-        <HistoryList histories={histories.histories} />
+        <HistoryList
+          histories={histories.histories}
+          onEndReach={fetchMoreHistories}
+        />
       ) : (
         <StyledNoHistory>사용자 활동 기록이 없습니다.</StyledNoHistory>
       )}
@@ -58,14 +79,19 @@ export default function History({ onClose, onDeleteAll }: Props) {
   );
 }
 
-const StyledHistory = styled.div`
+interface HistoryProps {
+  openanimation: Toggle;
+}
+
+const StyledHistory = styled.div<HistoryProps>`
   width: 366px;
   padding: 8px;
   border-radius: ${(props) => props.theme.objectStyles.radius.m};
   box-shadow: ${(props) => props.theme.objectStyles.dropShadow.floating};
   position: absolute;
   top: 20px;
-  right: 0;
+  right: ${(props) => (props.openanimation === 'open' ? '0px' : '-370px')};
+  transition: all 1s;
 `;
 
 const StyledHistoryTitleArea = styled.div`
