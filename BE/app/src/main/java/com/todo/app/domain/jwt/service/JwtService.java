@@ -35,7 +35,7 @@ public class JwtService {
 
     private Map<String, Object> generateMemberClaims(Member member) {
         return Map.of(
-                "id", member.getId()
+                "memberId", member.getId()
         );
     }
 
