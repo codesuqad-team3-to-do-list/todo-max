@@ -7,7 +7,9 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JwtProvider {
 
     public static final byte[] secret = "codesquad-todo-03-app-jinny-ape-bean-joy".getBytes();
@@ -15,7 +17,7 @@ public class JwtProvider {
 
     public String createToken(Map<String, Object> claims, Date expireDate) {
         return Jwts.builder()
-                .setClaims(claims) // TODO: member id값 넣어 주기
+                .setClaims(claims)
                 .setExpiration(expireDate)
                 .signWith(key)
                 .compact();

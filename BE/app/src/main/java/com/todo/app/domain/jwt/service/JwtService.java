@@ -12,10 +12,11 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
     private final JwtRepository jwtRepository;
-    private final JwtProvider jwtProvider = new JwtProvider();
+    private final JwtProvider jwtProvider;
 
-    public JwtService(JwtRepository jwtRepository) {
+    public JwtService(JwtRepository jwtRepository, JwtProvider jwtProvider) {
         this.jwtRepository = jwtRepository;
+        this.jwtProvider = jwtProvider;
     }
 
     public Jwt login(String email, String password) {
