@@ -2,17 +2,18 @@ import { styled } from 'styled-components';
 import HistoryList from './HistoryList';
 import { useEffect, useState } from 'react';
 import Button from '../Button';
+import ConfirmModal from '../ConfirmModal';
 
 interface Props {
   onClose: () => void;
-  onDeleteAll?: () => void;
 }
 
 type Toggle = 'close' | 'open';
 
-export default function History({ onClose, onDeleteAll }: Props) {
+export default function History({ onClose }: Props) {
   const [histories, setHistories] = useState<History>();
   const [toggleAnimation, setToggleAnimation] = useState<Toggle>('close');
+  const [isOpenDeleteAllModal, setIsOpenDeleteAllModal] = useState(false);
 
   const fetchHistory = async () => {
     const historyId = histories?.histories[histories.histories.length - 1]?.id;
@@ -44,6 +45,8 @@ export default function History({ onClose, onDeleteAll }: Props) {
     fetchHistory();
   };
 
+  const onDeleteAll = () => {};
+
   return (
     <StyledHistory openanimation={toggleAnimation}>
       <StyledHistoryTitleArea>
@@ -71,9 +74,17 @@ export default function History({ onClose, onDeleteAll }: Props) {
             elementPattern="textOnly"
             role="delete"
             text="기록 전체 삭제"
-            onClick={onDeleteAll}
+            onClick={() => setIsOpenDeleteAllModal(true)}
           />
         </StyledButtonContainer>
+      )}
+      {isOpenDeleteAllModal && (
+        <ConfirmModal
+          closeModal={() => setIsOpenDeleteAllModal(false)}
+          onConfirmClick={onDeleteAll}
+        >
+          모든 사용자 활동 기록을 삭제할까요?
+        </ConfirmModal>
       )}
     </StyledHistory>
   );
