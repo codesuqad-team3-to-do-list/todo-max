@@ -80,7 +80,7 @@ export default function HistoryItem({
   );
 }
 
-const StyledHistory = styled.div`
+const StyledHistory = styled.li`
   display: flex;
   padding: 16px;
   gap: 16px;
