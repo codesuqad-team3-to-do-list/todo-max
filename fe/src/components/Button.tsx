@@ -26,7 +26,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export default function Button({
   variant = 'transparent',
   pattern,
-  iconHoverColor = designSystem.colorSystem.surfaceBrand,
+  iconHoverColor,
   children,
   ...props
 }: ButtonProps) {
@@ -70,7 +70,7 @@ const StyledButton = styled.button<StyledButtonProps>`
   width: ${(props) => (props.pattern === 'text' ? '132px' : 'auto')};
   height: ${(props) => (props.pattern === 'text' ? '32px' : 'auto')};
   outline: none;
-  padding: 4px;
+  padding: ${(props) => (props.pattern === 'text' ? '4px' : '0px')}
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,7 +83,12 @@ const StyledButton = styled.button<StyledButtonProps>`
 
     & svg,
     path {
-      fill: ${(props) => props.iconHoverColor};
+      fill: ${(props) =>
+        props.iconHoverColor === 'red'
+          ? props.theme.colorSystem.surfaceDanger
+          : props.iconHoverColor === 'blue'
+          ? props.theme.colorSystem.surfaceBrand
+          : null};
     }
   }
 
