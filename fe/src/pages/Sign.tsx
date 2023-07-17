@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 import UserInput from '../components/UserInput';
+import Button from '../components/Button';
 
 type Type = 'login' | 'signUp';
 
@@ -32,9 +33,18 @@ export default function Sign({ type }: Props) {
   const isEmptyEmail = email.length === 0;
   const isEmptyPassword = password.length === 0;
 
+  const onSubmit = () => {
+    return {
+      email: email,
+      password: password,
+    };
+  };
+
   return (
-    <StyledLoginForm>
-      <StyledTitle type={type}>{type === "login" ? "로그인" : "회원가입"}</StyledTitle>
+    <StyledLoginForm action="/" method="POST" onSubmit={onSubmit}>
+      <StyledTitle type={type}>
+        {type === 'login' ? '로그인' : '회원가입'}
+      </StyledTitle>
 
       <UserInput
         type="email"
@@ -58,10 +68,22 @@ export default function Sign({ type }: Props) {
           : ''}
       </StyledValidInfo>
 
-      <StyledSignUpLink to={'/sign-up'}>회원가입</StyledSignUpLink>
-      <StyledLoginButton type="submit" disabled={!isButtonActive}>
-        로그인
-      </StyledLoginButton>
+      <StyledSignUpLink to={'/sign-up'}>
+        <Button
+          role="sign-up"
+          text="회원가입"
+          width="100%"
+          height="30px"
+          shadow="up"
+        />
+      </StyledSignUpLink>
+
+      <Button
+        text="로그인"
+        height="50px"
+        disabled={!isButtonActive}
+        shadow="up"
+      />
     </StyledLoginForm>
   );
 }
@@ -93,24 +115,15 @@ interface StyledTitleProps {
 const StyledTitle = styled.h2<StyledTitleProps>`
   font: ${(props) => props.theme.font.displayBold24};
   color: ${(props) => props.theme.colorSystem.surfaceBrand};
-  margin-bottom: 20px;
   text-align: ${(props) => props.type === 'signUp' && 'center'};
+  margin-bottom: 20px;
 `;
 
 const StyledSignUpLink = styled(Link)`
-  font: ${(props) => props.theme.font.displayBold16};
-  color: ${(props) => props.theme.colorSystem.textDefault};
-  background-color: ${(props) => props.theme.colorSystem.surfaceAlt};
-  border-radius: ${(props) => props.theme.objectStyles.radius.s};
-  box-shadow: ${(props) => props.theme.objectStyles.dropShadow.up};
-  height: 30px;
-  margin-top: 20px;
-  text-align: center;
-  line-height: 30px;
+  margin: 20px 0;
 
-  &:hover {
+  & *:hover {
     border: 2px solid ${(props) => props.theme.colors.grey600};
-    transform: scale(1.01);
   }
 `;
 
@@ -128,9 +141,7 @@ const StyledLoginButton = styled.button`
   }
 
   &:hover {
-    // border: 2px solid ${(props) => props.theme.colors.grey900};
     background-color: rgba(0, 122, 255, 0.8);
-    transform: scale(1.01);
   }
 `;
 
