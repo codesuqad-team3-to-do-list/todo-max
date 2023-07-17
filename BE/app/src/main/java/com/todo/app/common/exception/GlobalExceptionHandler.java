@@ -22,4 +22,9 @@ public class GlobalExceptionHandler {
     public ApiResponse<String> handleException(IllegalPasswordException ex) {
         return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalJwtTokenException.class)
+    public ApiResponse<String> handleException(IllegalJwtTokenException ex) {
+        return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
+    }
 }
