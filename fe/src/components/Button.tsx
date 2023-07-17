@@ -77,6 +77,7 @@ const StyledButton = styled.button<StyledButtonProps>`
   color: ${(props) => props.VARIANTS[props.variant].color};
   background: ${(props) => props.VARIANTS[props.variant].background};
   border-radius: ${(props) => props.theme.objectStyles.radius.s};
+  display:flex;
 
   &:hover {
     opacity: 0.8;
