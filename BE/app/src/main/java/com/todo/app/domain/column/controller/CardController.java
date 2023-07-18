@@ -7,6 +7,8 @@ import com.todo.app.domain.column.controller.request.CardUpdateRequest;
 import com.todo.app.domain.column.controller.response.CardResponse;
 import com.todo.app.domain.column.domain.Card;
 import com.todo.app.domain.column.service.CardService;
+import com.todo.app.domain.history.entity.Action;
+import com.todo.app.domain.history.entity.History;
 import com.todo.app.domain.history.service.HistoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,22 +31,24 @@ public class CardController {
 
     @PostMapping("/api/columns/{columnId}/cards")
     public ApiResponse<CardResponse> createCard(@RequestBody CardCreateRequest createRequest, @PathVariable Long columnId) {
-        return ApiResponse.success(
-                HttpStatus.OK,
-                CardResponse.from(cardService.create(createRequest.toCardCreate(columnId)))
-        );
+        final Card card = cardService.create(createRequest.toCardCreate(columnId));
+
+        historyService.cache(createRequest.toHistory(1L));
+
+        return ApiResponse.success(HttpStatus.OK, CardResponse.from(card));
     }
 
     @PatchMapping("/api/cards/{cardId}")
     public ApiResponse<Void> updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequest updateRequest) {
         cardService.update(updateRequest.toCardUpdate());
+        historyService.cache(updateRequest.toHistory(1L));
 
         return ApiResponse.success(HttpStatus.OK);
     }
 
     @PatchMapping("/api/columns/{columnId}/cards/{cardId}")
     public ApiResponse<Void> moveCard(@PathVariable Long columnId, @PathVariable Long cardId, @RequestBody CardMoveRequest request) {
-        final Card card = request.toCard();
+        final Card card = request.toCardMove();
         cardService.move(card, request.getPreviousCardId(), request.getNextCardId());
 
         if (request.isMovedColumn(columnId)) {
@@ -55,12 +59,11 @@ public class CardController {
     }
 
     @DeleteMapping("/api/columns/{columnId}/cards/{cardId}")
-    public ApiResponse<String> deleteCard(@PathVariable Long columnId, @PathVariable Long cardId) {
-        cardService.delete(cardId);
+    public ApiResponse<Void> deleteCard(@PathVariable Long columnId, @PathVariable Long cardId) {
+        final String deletedCardTitle = cardService.delete(cardId);
 
-        return ApiResponse.success(
-                HttpStatus.OK,
-                HttpStatus.OK.getReasonPhrase()
-        );
+        historyService.cache(new History(1L, Action.DELETE.name(), deletedCardTitle));
+
+        return ApiResponse.success(HttpStatus.OK);
     }
 }
