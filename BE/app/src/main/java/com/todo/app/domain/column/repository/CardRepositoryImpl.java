@@ -3,14 +3,13 @@ package com.todo.app.domain.column.repository;
 import com.todo.app.domain.column.domain.Card;
 import com.todo.app.domain.column.domain.CardCreate;
 import com.todo.app.domain.column.domain.CardUpdate;
-import com.todo.app.domain.column.entity.CardEntity;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -37,12 +36,17 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
-    public Card update(CardUpdate card, Long columnId) {
+    public boolean existsCard(Long cardId) {
+        final String sql = "SELECT EXISTS (SELECT 1 FROM tdl_card WHERE id = :cardId)";
 
+        return Boolean.TRUE.equals(template.queryForObject(sql, Map.of("cardId", cardId), Boolean.class));
+    }
+
+    @Override
+    public void update(CardUpdate card) {
         String sql = "UPDATE tdl_card SET title = :title, content = :content WHERE id = :id";
-        template.update(sql, mappingUdateCardSqlParameterSource(card));
 
-        return new Card(card.getId(), columnId, card.getTitle(), card.getContent(), "web");
+        template.update(sql, mappingUdateCardSqlParameterSource(card));
     }
 
     @Override
@@ -63,10 +67,7 @@ public class CardRepositoryImpl implements CardRepository {
                 + "WHERE card.deleted = 0 "
                 + "AND member_id = :memberId";
 
-        return template.query(sql, Map.of("memberId", memberId), cardRowMapper())
-                .stream()
-                .map(CardEntity::toDomain)
-                .collect(Collectors.toList());
+        return template.query(sql, Map.of("memberId", memberId), cardRowMapper());
     }
 
     private RowMapper<CardEntity> cardRowMapper() {
@@ -75,7 +76,9 @@ public class CardRepositoryImpl implements CardRepository {
                 rs.getLong("tdl_column_id"),
                 rs.getString("title"),
                 rs.getString("content"),
-                rs.getString("author")
+                rs.getString("author"),
+                rs.getLong("weight_value"),
+                false
         );
     }
 

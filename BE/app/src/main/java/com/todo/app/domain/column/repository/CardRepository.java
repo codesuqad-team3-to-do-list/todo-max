@@ -9,9 +9,11 @@ public interface CardRepository {
 
     List<Card> findAllBy(Long memberId);
 
+    boolean existsCard(Long cardId);
+
     Card save(CardCreate card);
 
-    Card update(CardUpdate card, Long columnId);
+    void update(CardUpdate card);
 
     void delete(Long cardId);
 }
