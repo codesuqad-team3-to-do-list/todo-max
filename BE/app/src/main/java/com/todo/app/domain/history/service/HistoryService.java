@@ -1,8 +1,8 @@
 package com.todo.app.domain.history.service;
 
-import com.todo.app.domain.history.repository.RedisCacheRepository;
 import com.todo.app.domain.history.entity.History;
 import com.todo.app.domain.history.repository.HistoryRepository;
+import com.todo.app.domain.history.repository.RedisCacheRepository;
 import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
