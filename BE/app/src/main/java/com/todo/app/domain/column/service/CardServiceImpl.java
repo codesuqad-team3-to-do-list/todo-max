@@ -1,8 +1,6 @@
 package com.todo.app.domain.column.service;
 
 import com.todo.app.domain.column.domain.Card;
-import com.todo.app.domain.column.domain.CardCreate;
-import com.todo.app.domain.column.domain.CardUpdate;
 import com.todo.app.domain.column.repository.CardRepository;
 import com.todo.app.domain.history.service.HistoryService;
 import java.util.List;
@@ -23,12 +21,17 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Card create(CardCreate card) {
+    public Card create(Card card) {
+        Long previousWeightValue = cardRepository.findLastCardWeightValue(card.getColumnId())
+                .orElseGet(() -> 0L);
+
+        card.assignWeightValue(previousWeightValue + WEIGHT_VALUE_INTERVAL);
+
         return cardRepository.save(card);
     }
 
     @Override
-    public void update(CardUpdate card) {
+    public void update(Card card) {
         cardRepository.update(card);
     }
 
@@ -46,13 +49,18 @@ public class CardServiceImpl implements CardService {
             weightValues = getWeightValues(previousCardId, nextCardId);
         }
 
-        card.resizeWeightValue(weightValues.get(0), weightValues.get(1));
+        card.assignWeightValueAverage(weightValues.get(0), weightValues.get(1));
         cardRepository.updateMove(card);
     }
 
     @Override
-    public void delete(Long cardId) {
+    public String delete(Long cardId) {
+        final String cardTitle = cardRepository.findTitleBy(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카드가 존재하지 않습니다."));
+
         cardRepository.delete(cardId);
+
+        return cardTitle;
     }
 
     private List<Long> getWeightValues(final Long previousCardId, final Long nextCardId) {
@@ -75,7 +83,7 @@ public class CardServiceImpl implements CardService {
         long weightValue = WEIGHT_VALUE_INTERVAL;
 
         for (Card card : cards) {
-            card.resizeWeightValue(weightValue);
+            card.assignWeightValue(weightValue);
             weightValue += WEIGHT_VALUE_INTERVAL;
         }
 

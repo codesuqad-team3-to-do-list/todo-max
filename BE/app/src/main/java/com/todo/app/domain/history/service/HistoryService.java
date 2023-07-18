@@ -25,9 +25,8 @@ public class HistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<History> findHistories(Long historyId, int count) {
-
-        return historyRepository.findHistories(1L, historyId, count);
+    public List<History> findHistories(Long memberId, Long historyId, int count) {
+        return historyRepository.findHistories(memberId, historyId, count);
     }
 
     @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
@@ -39,5 +38,9 @@ public class HistoryService {
         }
 
         historyRepository.saveAll(histories);
+    }
+
+    public void deleteAll(Long memberId) {
+        historyRepository.deleteAll(memberId);
     }
 }

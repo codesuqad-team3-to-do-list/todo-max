@@ -1,9 +1,8 @@
 package com.todo.app.domain.column.repository;
 
 import com.todo.app.domain.column.domain.Card;
-import com.todo.app.domain.column.domain.CardCreate;
-import com.todo.app.domain.column.domain.CardUpdate;
 import java.util.List;
+import java.util.Optional;
 
 public interface CardRepository {
 
@@ -11,13 +10,17 @@ public interface CardRepository {
 
     boolean existsCard(Long cardId);
 
-    Card save(CardCreate card);
+    Card save(Card card);
 
-    void update(CardUpdate card);
+    void update(Card card);
 
     void delete(Long cardId);
 
     List<Long> findWeightsBy(Long prevId, Long nextId);
+
+    Optional<String> findTitleBy(Long cardId);
+
+    Optional<Long> findLastCardWeightValue(Long columnId);
 
     List<Card> findCardsBy(Long columId);
 

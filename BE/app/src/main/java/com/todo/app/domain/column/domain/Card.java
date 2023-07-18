@@ -20,22 +20,16 @@ public class Card {
         this.deleted = deleted;
     }
 
-    public Card(Long id, Long columnId, String title, String author) {
-        this.id = id;
-        this.columnId = columnId;
-        this.title = title;
-    }
-
-    public Card(Long id, Long columnId, String title, String content, String autor) {
-        this.id = id;
-        this.columnId = columnId;
-        this.title = title;
-        this.content = content;
+    public Card(Long id, Long columnId, String title, String content, String author) {
+        this(id, columnId, title, content, author, 0L, false);
     }
 
     public Card(Long id, Long columnId) {
         this.id = id;
         this.columnId = columnId;
+    }
+
+    private Card() {
     }
 
     public Long getId() {
@@ -66,11 +60,29 @@ public class Card {
         return deleted;
     }
 
-    public void resizeWeightValue(Long weightValue) {
+    public void assignWeightValue(Long weightValue) {
         this.weightValue = weightValue;
     }
 
-    public void resizeWeightValue(Long pervWeightValue, Long nextWeightValue) {
+    public void assignWeightValueAverage(Long pervWeightValue, Long nextWeightValue) {
         this.weightValue = Math.floorDiv(pervWeightValue + nextWeightValue, 2);
+    }
+
+    public static Card createCard(Long columnId, String title, String content) {
+        final Card card = new Card();
+        card.columnId = columnId;
+        card.title = title;
+        card.content = content;
+
+        return card;
+    }
+
+    public static Card updateCard(Long id, String title, String content) {
+        final Card card = new Card();
+        card.id = id;
+        card.title = title;
+        card.content = content;
+
+        return card;
     }
 }
