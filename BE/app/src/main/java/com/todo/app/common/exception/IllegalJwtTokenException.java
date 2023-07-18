@@ -11,7 +11,7 @@ public class IllegalJwtTokenException extends  RuntimeException {
     }
 
     public IllegalJwtTokenException(JwtTokenType tokenType) {
-        super("[Token 인증 오류]: 잘못된 " + tokenType.name() + "입니다.");
+        super("[Token 인증 오류]: 잘못된 " + tokenType.name() + " 토큰 입니다.");
     }
 
     public HttpStatus getHttpStatus() {
