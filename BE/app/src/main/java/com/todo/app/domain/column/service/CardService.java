@@ -8,7 +8,9 @@ public interface CardService {
 
     Card create(CardCreate card);
 
-    Card update(CardUpdate card, Long columnId);
+    void update(CardUpdate card);
 
     void delete(Long cardId);
+
+    void move(Card card, Long previousCardId, Long nextCardId);
 }
