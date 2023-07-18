@@ -51,7 +51,12 @@ export default function Button({
 
   return (
     <StyledButton
-      {...{ VARIANTS, variant, pattern, iconHoverColor }}
+      {...{
+        variants: VARIANTS,
+        variant,
+        pattern,
+        iconhovercolor: iconHoverColor,
+      }}
       {...props}
     >
       {children}
@@ -60,18 +65,18 @@ export default function Button({
 }
 
 interface StyledButtonProps {
-  VARIANTS: Variants;
+  variants: Variants;
   variant: ButtonVariant;
   pattern: ButtonPattern;
-  iconHoverColor?: string;
+  iconhovercolor?: string;
 }
 
 const StyledButton = styled.button<StyledButtonProps>`
   width: ${(props) => (props.pattern === 'text' ? '132px' : 'auto')};
   height: ${(props) => (props.pattern === 'text' ? '32px' : 'auto')};
   padding: ${(props) => (props.pattern === 'text' ? '4px' : '0px')};
-  color: ${(props) => props.VARIANTS[props.variant].color};
-  background: ${(props) => props.VARIANTS[props.variant].background};
+  color: ${(props) => props.variants[props.variant].color};
+  background: ${(props) => props.variants[props.variant].background};
   border-radius: ${(props) => props.theme.objectStyles.radius.s};
   outline: none;
   display: flex;
@@ -83,9 +88,9 @@ const StyledButton = styled.button<StyledButtonProps>`
 
     & svg path {
       fill: ${(props) =>
-        props.iconHoverColor === 'red'
+        props.iconhovercolor === 'red'
           ? props.theme.colorSystem.surfaceDanger
-          : props.iconHoverColor === 'blue'
+          : props.iconhovercolor === 'blue'
           ? props.theme.colorSystem.surfaceBrand
           : null};
     }
