@@ -38,12 +38,6 @@ public class JwtController {
         );
     }
 
-    @GetMapping("/api/jwt-exception")
-    public ApiResponse<String> jwtExceptioin(HttpServletRequest request) {
-        //throw new IllegalJwtTokenException(request.getAttribute());
-        return null;
-    }
-
     @GetMapping("/api/test")
     public ApiResponse<String> test(HttpServletRequest request) {
         return ApiResponse.success(HttpStatus.OK, "Success");

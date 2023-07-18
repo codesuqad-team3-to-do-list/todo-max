@@ -44,10 +44,6 @@ public class JwtAuthorizationFilter implements Filter {
             return;
         }
 
-        ((HttpServletResponse) response).setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
-
         try {
             String token = getToken(httpServletRequest);
             Claims claims = jwtProvider.getClaims(token);
