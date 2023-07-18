@@ -3,6 +3,7 @@ package com.todo.app.common.aop.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todo.app.common.ApiResponse;
 import com.todo.app.common.exception.JwtExceptionType;
+import com.todo.app.domain.jwt.controller.response.JwtExceptionResponse;
 import com.todo.app.domain.jwt.entity.JwtProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.MalformedJwtException;
@@ -79,11 +80,11 @@ public class JwtAuthorizationFilter implements Filter {
         );
     }
 
-    private ApiResponse<String> generateErrorApiResponse(RuntimeException e) {
+    private ApiResponse<JwtExceptionResponse> generateErrorApiResponse(RuntimeException e) {
         JwtExceptionType jwtExceptionType = JwtExceptionType.from(e);
         return ApiResponse.exception(
                 jwtExceptionType.getHttpStatus(),
-                jwtExceptionType.getMessage());
+                new JwtExceptionResponse(jwtExceptionType));
     }
 
 }
