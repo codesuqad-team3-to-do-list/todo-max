@@ -5,6 +5,7 @@ import com.todo.app.common.ApiResponse;
 import com.todo.app.common.exception.JwtExceptionType;
 import com.todo.app.domain.jwt.entity.JwtProvider;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.MalformedJwtException;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,7 +33,6 @@ public class JwtAuthorizationFilter implements Filter {
             throws ServletException, IOException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         if(whiteListCheck(httpServletRequest.getRequestURI())){
             chain.doFilter(request, response);
@@ -40,7 +40,7 @@ public class JwtAuthorizationFilter implements Filter {
         }
 
         if(!isContainToken(httpServletRequest)){
-            httpServletResponse.sendError(HttpStatus.UNAUTHORIZED.value(),"토큰 인증 오류");
+            sendErrorApiResponse(response, new MalformedJwtException(""));
             return;
         }
 
