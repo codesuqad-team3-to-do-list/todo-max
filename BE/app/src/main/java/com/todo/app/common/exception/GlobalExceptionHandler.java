@@ -1,6 +1,8 @@
 package com.todo.app.common.exception;
 
 import com.todo.app.common.ApiResponse;
+import com.todo.app.domain.jwt.controller.response.JwtExceptionResponse;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,4 +29,11 @@ public class GlobalExceptionHandler {
     public ApiResponse<String> handleException(IllegalJwtTokenException ex) {
         return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
     }
+
+    @ExceptionHandler(JwtException.class)
+    public ApiResponse<JwtExceptionResponse> handleException(JwtException ex) {
+        JwtExceptionType jwtExceptionType = JwtExceptionType.from(ex);
+        return ApiResponse.exception(jwtExceptionType.getHttpStatus(), new JwtExceptionResponse(jwtExceptionType));
+    }
+
 }

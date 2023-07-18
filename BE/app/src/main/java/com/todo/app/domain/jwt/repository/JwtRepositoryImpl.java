@@ -2,6 +2,7 @@ package com.todo.app.domain.jwt.repository;
 
 import com.todo.app.domain.jwt.entity.Member;
 import java.util.Map;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -28,7 +29,11 @@ public class JwtRepositoryImpl implements JwtRepository {
                 + "ON m.id = r.member_id "
                 + "WHERE r.refresh_token = :refreshToken";
 
-        return template.queryForObject(sql, Map.of("refreshToken", refreshToken), memberRowMapper());
+        try {
+            return template.queryForObject(sql, Map.of("refreshToken", refreshToken), memberRowMapper());
+        } catch (DataAccessException e) {
+            return null;
+        }
     }
 
     public void saveRefreshToken(String refreshToken, Long memberId) {
