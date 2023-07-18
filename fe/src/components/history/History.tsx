@@ -3,6 +3,7 @@ import HistoryList from './HistoryList';
 import { useEffect, useState } from 'react';
 import Button from '../Button';
 import ConfirmModal from '../ConfirmModal';
+import ClosedIcon from '../ClosedIcon';
 
 interface Props {
   onClose: () => void;
@@ -51,13 +52,10 @@ export default function History({ onClose }: Props) {
     <StyledHistory openanimation={toggleAnimation}>
       <StyledHistoryTitleArea>
         <div className="title">사용자 활동 기록</div>
-        <Button
-          type="ghost"
-          elementPattern="iconText"
-          role="close"
-          text="닫기"
-          onClick={onCloseHistory}
-        />
+        <Button pattern="icon" onClick={onCloseHistory}>
+          <ClosedIcon width="16px" />
+          <StyledButtonText>닫기</StyledButtonText>
+        </Button>
       </StyledHistoryTitleArea>
       {histories ? (
         <HistoryList
@@ -69,13 +67,7 @@ export default function History({ onClose }: Props) {
       )}
       {histories?.length !== 0 && (
         <StyledButtonContainer>
-          <Button
-            type="ghost"
-            elementPattern="textOnly"
-            role="delete"
-            text="기록 전체 삭제"
-            onClick={() => setIsOpenDeleteAllModal(true)}
-          />
+          <Button onClick={() => setIsOpenDeleteAllModal(true)} />
         </StyledButtonContainer>
       )}
       {isOpenDeleteAllModal && (
@@ -132,4 +124,8 @@ const StyledButtonContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 4px;
+`;
+
+const StyledButtonText = styled.div`
+  font: ${(props) => props.theme.font.displayBold14};
 `;

@@ -18,8 +18,11 @@ export default function ConfirmModal({
       <StyledModal>
         <StyledModalBody>{children}</StyledModalBody>
         <StyledButtonContainer>
-          <Button role="cancel" text="취소" onClick={closeModal} />
-          <Button role="delete" text="삭제" onClick={onConfirmClick} />
+          {/* <Button variant="red" pattern="text" onClick={closeModal}>
+            취소
+          </Button> */}
+          {/* <Button role="cancel" text="취소" onClick={closeModal} />
+          <Button role="delete" text="삭제" onClick={onConfirmClick} /> */}
         </StyledButtonContainer>
       </StyledModal>
     </StyledModalContainer>
