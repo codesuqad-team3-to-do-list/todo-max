@@ -88,9 +88,4 @@ public class CardServiceImpl implements CardService {
 
         return (nextWeightValue - previousWeightValue) <= 1L;
     }
-
-    @Override
-    public void delete(Long cardId) {
-        cardRepository.delete(cardId);
-    }
 }

@@ -1,6 +1,5 @@
 package com.todo.app.domain.column.repository;
 
-import com.todo.app.common.exception.ResourceNotFoundException;
 import com.todo.app.domain.column.domain.Column;
 import com.todo.app.domain.column.entity.ColumnEntity;
 import java.util.List;

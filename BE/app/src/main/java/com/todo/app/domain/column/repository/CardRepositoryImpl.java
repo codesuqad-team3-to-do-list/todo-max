@@ -70,8 +70,43 @@ public class CardRepositoryImpl implements CardRepository {
         return template.query(sql, Map.of("memberId", memberId), cardRowMapper());
     }
 
-    private RowMapper<CardEntity> cardRowMapper() {
-        return (rs, rowNum) -> new CardEntity(
+    @Override
+    public void updateMove(Card card) {
+        String sql = "UPDATE tdl_card "
+                + "SET tdl_column_id = :columnId, weight_value = :weightValue "
+                + "WHERE id = :id";
+
+        template.update(sql, mappingUpdateWeightValueSqlParameterSource(card));
+    }
+
+    @Override
+    public List<Long> findWeightsBy(Long prevId, Long nextId) {
+        String sql = "SELECT weight_value "
+                + "FROM tdl_card "
+                + "WHERE id = :prevId OR id = :nextId";
+
+        return template.query(sql, mappingfindWeightsSqlParameterSource(prevId, nextId), (rs, rowNum) -> rs.getLong("weight_value"));
+    }
+
+    @Override
+    public List<Card> findCardsBy(Long columnId) {
+        String sql = "SELECT id, tdl_column_id, title, content, author, weight_value "
+                + "FROM tdl_card card "
+                + "WHERE card.tdl_column_id = :columnId "
+                + "AND deleted = 0";
+
+        return template.query(sql, Map.of("columnId", columnId), cardRowMapper());
+    }
+
+    @Override
+    public void updateWeightValueCards(List<Card> cards) {
+        String sql = "UPDATE tdl_card SET weight_value = :weightValue WHERE id = :id";
+
+        template.batchUpdate(sql, SqlParameterSourceUtils.createBatch(cards));
+    }
+
+    private RowMapper<Card> cardRowMapper() {
+        return (rs, rowNum) -> new Card(
                 rs.getLong("id"),
                 rs.getLong("tdl_column_id"),
                 rs.getString("title"),
@@ -94,5 +129,18 @@ public class CardRepositoryImpl implements CardRepository {
                 .addValue("id", card.getId())
                 .addValue("title", card.getTitle())
                 .addValue("content", card.getContent());
+    }
+
+    private SqlParameterSource mappingUpdateWeightValueSqlParameterSource(Card card) {
+        return new MapSqlParameterSource()
+                .addValue("id", card.getId())
+                .addValue("columnId", card.getColumnId())
+                .addValue("weightValue", card.getWeightValue());
+    }
+
+    private SqlParameterSource mappingfindWeightsSqlParameterSource(Long prevId, Long nextId) {
+        return new MapSqlParameterSource()
+                .addValue("prevId", prevId)
+                .addValue("nextId", nextId);
     }
 }

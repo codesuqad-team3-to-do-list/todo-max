@@ -16,4 +16,12 @@ public interface CardRepository {
     void update(CardUpdate card);
 
     void delete(Long cardId);
+
+    List<Long> findWeightsBy(Long prevId, Long nextId);
+
+    List<Card> findCardsBy(Long columId);
+
+    void updateWeightValueCards(List<Card> cards);
+
+    void updateMove(Card card);
 }
