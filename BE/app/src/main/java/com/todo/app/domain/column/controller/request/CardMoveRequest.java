@@ -54,7 +54,7 @@ public class CardMoveRequest {
         return new History(memberId, Action.MOVE.name(), cardTitle, previousColumnTitle, currentColumnTitle);
     }
 
-    public Card toCard() {
+    public Card toCardMove() {
         return new Card(id, toColumnId);
     }
 }

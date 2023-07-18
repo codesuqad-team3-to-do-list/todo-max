@@ -7,11 +7,13 @@ public class CardResponse {
     private Long id;
     private String title;
     private String content;
+    private String author;
 
-    public CardResponse(Long id, String title, String content) {
+    public CardResponse(Long id, String title, String content, String author) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.author = author;
     }
 
     public Long getId() {
@@ -26,7 +28,11 @@ public class CardResponse {
         return content;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
     public static CardResponse from(Card card) {
-        return new CardResponse(card.getId(), card.getTitle(), card.getContent());
+        return new CardResponse(card.getId(), card.getTitle(), card.getContent(), card.getAuthor());
     }
 }

@@ -1,10 +1,10 @@
 package com.todo.app.domain.column.repository;
 
 import com.todo.app.domain.column.domain.Card;
-import com.todo.app.domain.column.domain.CardCreate;
-import com.todo.app.domain.column.domain.CardUpdate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,15 +24,29 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
-    public Card save(CardCreate card) {
+    public Optional<Long> findLastCardWeightValue(Long columnId) {
+        String sql = "SELECT weight_value "
+                + "FROM tdl_card "
+                + "WHERE tdl_column_id = :columnId AND deleted = 0 "
+                + "ORDER BY weight_value DESC "
+                + "LIMIT 1";
 
-        String sql = "INSERT INTO tdl_card(tdl_column_id, title, content) "
-                + "VALUES(:tdlColumnId, :title, :content)";
+        try (Stream<Long> result = template.queryForStream(sql, Map.of("columnId", columnId),
+                (rs, num) -> rs.getLong("weight_value"))) {
+
+            return result.findFirst();
+        }
+    }
+
+    @Override
+    public Card save(Card card) {
+        String sql = "INSERT INTO tdl_card(tdl_column_id, title, content, weight_value) "
+                + "VALUES(:tdlColumnId, :title, :content, :weightValue)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(sql, mappingCreateCardSqlParameterSource(card), keyHolder);
 
-        return new Card(keyHolder.getKey().longValue(), card.getColumnId(), card.getTitle(), card.getContent(), "web");
+        return new Card(keyHolder.getKey().longValue(), card.getColumnId(), card.getTitle(), card.getContent(), card.getAuthor());
     }
 
     @Override
@@ -43,7 +57,7 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
-    public void update(CardUpdate card) {
+    public void update(Card card) {
         String sql = "UPDATE tdl_card SET title = :title, content = :content WHERE id = :id";
 
         template.update(sql, mappingUdateCardSqlParameterSource(card));
@@ -56,6 +70,17 @@ public class CardRepositoryImpl implements CardRepository {
                 + "WHERE id = :cardId";
 
         template.update(sql, Map.of("cardId", cardId));
+    }
+
+    @Override
+    public Optional<String> findTitleBy(Long cardId) {
+        String sql = "SELECT title FROM tdl_card WHERE id = :cardId";
+
+        try (Stream<String> result = template.queryForStream(sql, Map.of("cardId", cardId),
+                (rs, num) -> rs.getString("title"))) {
+
+            return result.findFirst();
+        }
     }
 
     @Override
@@ -117,14 +142,15 @@ public class CardRepositoryImpl implements CardRepository {
         );
     }
 
-    private SqlParameterSource mappingCreateCardSqlParameterSource(CardCreate card) {
+    private SqlParameterSource mappingCreateCardSqlParameterSource(Card card) {
         return new MapSqlParameterSource()
                 .addValue("tdlColumnId", card.getColumnId())
                 .addValue("title", card.getTitle())
-                .addValue("content", card.getContent());
+                .addValue("content", card.getContent())
+                .addValue("weightValue", card.getWeightValue());
     }
 
-    private SqlParameterSource mappingUdateCardSqlParameterSource(CardUpdate card) {
+    private SqlParameterSource mappingUdateCardSqlParameterSource(Card card) {
         return new MapSqlParameterSource()
                 .addValue("id", card.getId())
                 .addValue("title", card.getTitle())
