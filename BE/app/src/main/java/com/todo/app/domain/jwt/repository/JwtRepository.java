@@ -6,4 +6,5 @@ public interface JwtRepository {
 
     Member findBy(String email);
     void saveRefreshToken(String refreshToken, Long memberId);
+    Member findByRefreshToken(String refreshToken);
 }

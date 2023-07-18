@@ -1,5 +1,6 @@
 package com.todo.app.common.exception;
 
+import com.todo.app.domain.jwt.controller.response.JwtTokenType;
 import org.springframework.http.HttpStatus;
 
 public class IllegalJwtTokenException extends  RuntimeException {
@@ -7,6 +8,10 @@ public class IllegalJwtTokenException extends  RuntimeException {
 
     public IllegalJwtTokenException(String message) {
         super("[Token 인증 오류]: " + message);
+    }
+
+    public IllegalJwtTokenException(JwtTokenType tokenType) {
+        super("[Token 인증 오류]: 잘못된 " + tokenType.name() + "입니다.");
     }
 
     public HttpStatus getHttpStatus() {

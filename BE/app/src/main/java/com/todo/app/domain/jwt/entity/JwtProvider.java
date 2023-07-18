@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProvider {
 
-    public static final byte[] secret = "codesquad-todo-03-app-jinny-ape-bean-joy".getBytes();
+    private static final byte[] secret = "codesquad-todo-03-app-jinny-ape-bean-joy".getBytes();
     private final Key key = Keys.hmacShaKeyFor(secret);
 
     public String createToken(Map<String, Object> claims, Date expireDate) {
@@ -23,6 +23,11 @@ public class JwtProvider {
                 .compact();
     }
 
+    /**
+     * 파라미터로 입력받은 token에서 Claims을 추출한다. 추출 하면서 토큰 검증도 같이 한다.
+     * @param token Claims를 추출할 토큰 문자열
+     * @return 토큰의 Claims
+     */
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -34,6 +39,11 @@ public class JwtProvider {
     public Jwt createJwt(Map<String, Object> claims) {
         String accessToken = createToken(claims, getExpireDateAccessToken());
         String refreshToken = createToken(new HashMap<>(), getExpireDateRefreshToken());
+        return new Jwt(accessToken, refreshToken);
+    }
+
+    public Jwt reissueAccessToken(Map<String, Object> claims, String refreshToken) {
+        String accessToken = createToken(claims, getExpireDateAccessToken());
         return new Jwt(accessToken, refreshToken);
     }
 
