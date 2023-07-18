@@ -30,6 +30,22 @@ public class CardMoveRequest {
         return nextCardId;
     }
 
+    public String getCardTitle() {
+        return cardTitle;
+    }
+
+    public Long getToColumnId() {
+        return toColumnId;
+    }
+
+    public String getPreviousColumnTitle() {
+        return previousColumnTitle;
+    }
+
+    public String getCurrentColumnTitle() {
+        return currentColumnTitle;
+    }
+
     public boolean isMovedColumn(Long fromColumnId) {
         return Objects.equals(fromColumnId, toColumnId);
     }

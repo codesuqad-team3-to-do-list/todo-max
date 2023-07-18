@@ -5,6 +5,7 @@ import com.todo.app.domain.column.controller.request.CardCreateRequest;
 import com.todo.app.domain.column.controller.request.CardMoveRequest;
 import com.todo.app.domain.column.controller.request.CardUpdateRequest;
 import com.todo.app.domain.column.controller.response.CardResponse;
+import com.todo.app.domain.column.domain.Card;
 import com.todo.app.domain.column.service.CardService;
 import com.todo.app.domain.history.service.HistoryService;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,8 @@ public class CardController {
 
     @PatchMapping("/api/columns/{columnId}/cards/{cardId}")
     public ApiResponse<Void> moveCard(@PathVariable Long columnId, @PathVariable Long cardId, @RequestBody CardMoveRequest request) {
-        cardService.move(request.toCard(), request.getPreviousCardId(), request.getNextCardId());
+        final Card card = request.toCard();
+        cardService.move(card, request.getPreviousCardId(), request.getNextCardId());
 
         if (request.isMovedColumn(columnId)) {
             historyService.cache(request.toHistory(1L));
