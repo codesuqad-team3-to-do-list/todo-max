@@ -42,7 +42,7 @@ public class CardServiceImpl implements CardService {
         List<Long> weightValues = getWeightValues(previousCardId, nextCardId);
 
         if (isFullWeightValues(weightValues)) {
-            resizeWeightValues(card.getColumnId());
+            resizeAllWeightValues(card.getColumnId());
             weightValues = getWeightValues(previousCardId, nextCardId);
         }
 
@@ -70,7 +70,7 @@ public class CardServiceImpl implements CardService {
         return weightValues;
     }
 
-    public void resizeWeightValues(final Long columnId) {
+    public void resizeAllWeightValues(final Long columnId) {
         final List<Card> cards = cardRepository.findCardsBy(columnId);
         long weightValue = WEIGHT_VALUE_INTERVAL;
 
