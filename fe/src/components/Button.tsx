@@ -69,20 +69,19 @@ interface StyledButtonProps {
 const StyledButton = styled.button<StyledButtonProps>`
   width: ${(props) => (props.pattern === 'text' ? '132px' : 'auto')};
   height: ${(props) => (props.pattern === 'text' ? '32px' : 'auto')};
-  outline: none;
-  padding: ${(props) => (props.pattern === 'text' ? '4px' : '0px')}
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: ${(props) => (props.pattern === 'text' ? '4px' : '0px')};
   color: ${(props) => props.VARIANTS[props.variant].color};
   background: ${(props) => props.VARIANTS[props.variant].background};
   border-radius: ${(props) => props.theme.objectStyles.radius.s};
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &:hover {
     opacity: 0.8;
 
-    & svg,
-    path {
+    & svg path {
       fill: ${(props) =>
         props.iconHoverColor === 'red'
           ? props.theme.colorSystem.surfaceDanger
