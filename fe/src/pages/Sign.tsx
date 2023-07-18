@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 import UserInput from '../components/UserInput';
-import Button from '../components/Button';
 
 type Type = 'login' | 'signUp';
 
@@ -13,7 +12,7 @@ interface Props {
 export default function Sign({ type }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [checkPassword, setCheckPassword] = useState('');
+  // const [checkPassword, setCheckPassword] = useState('');
 
   const handleSetEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -69,21 +68,12 @@ export default function Sign({ type }: Props) {
       </StyledValidInfo>
 
       <StyledSignUpLink to={'/sign-up'}>
-        <Button
-          role="sign-up"
-          text="회원가입"
-          width="100%"
-          height="30px"
-          shadow="up"
-        />
+        <StyledButton type="signUp">회원가입</StyledButton>
       </StyledSignUpLink>
 
-      <Button
-        text="로그인"
-        height="50px"
-        disabled={!isButtonActive}
-        shadow="up"
-      />
+      <StyledButton type="login" disabled={!isButtonActive}>
+        로그인
+      </StyledButton>
     </StyledLoginForm>
   );
 }
@@ -103,7 +93,7 @@ const StyledLoginForm = styled.form`
   flex-direction: column;
   width: 400px;
   height: auto;
-  margin: 10% auto 0;
+  margin: 30px auto 0;
   padding: 40px;
   box-sizing: border-box;
 `;
@@ -120,6 +110,7 @@ const StyledTitle = styled.h2<StyledTitleProps>`
 `;
 
 const StyledSignUpLink = styled(Link)`
+  display: block;
   margin: 20px 0;
 
   & *:hover {
@@ -127,21 +118,33 @@ const StyledSignUpLink = styled(Link)`
   }
 `;
 
-const StyledLoginButton = styled.button`
+interface StyledButton {
+  type: 'login' | 'signUp';
+  disabled?: boolean;
+}
+
+const StyledButton = styled.button<StyledButton>`
+  height: ${(props) => (props.type === 'login' ? '50px' : '40px')};
+  color: ${(props) =>
+    props.type === 'login'
+      ? props.theme.colorSystem.textWhiteDefault
+      : props.theme.colorSystem.textDefault};
+  background-color: ${(props) =>
+    props.type === 'login'
+      ? props.theme.colorSystem.surfaceBrand
+      : props.theme.colorSystem.surfaceDefault};
   font: ${(props) => props.theme.font.displayBold16};
-  color: ${(props) => props.theme.colorSystem.textWhiteDefault};
-  background-color: ${(props) => props.theme.colorSystem.surfaceBrand};
   border-radius: ${(props) => props.theme.objectStyles.radius.s};
-  box-shadow: ${(props) => props.theme.objectStyles.dropShadow.up};
-  height: 50px;
+  box-shadow: ${(props) => props.theme.objectStyles.dropShadow.normal};
+  width: 100%;
   margin-top: 20px;
 
   &:disabled {
-    background-color: rgba(0, 122, 255, 0.3);
+    opacity: ${(props) => props.theme.opacity.disabled};
   }
 
   &:hover {
-    background-color: rgba(0, 122, 255, 0.8);
+    opacity: ${(props) => props.theme.opacity.hover};
   }
 `;
 

@@ -17,8 +17,8 @@ export default function App() {
       <BrowserRouter>
         <Header isLogin={isLogin} />
         <Routes>
-          <Route path="/" element={<Sign type={'login'} />} />
-          <Route path="/main" element={<Main token={token} />} />
+          <Route path="/login" element={<Sign type={'login'} />} />
+          <Route path="/" element={<Main token={token} />} />
           <Route path="/sign-up" element={<Sign type={'signUp'} />} />
         </Routes>
       </BrowserRouter>
