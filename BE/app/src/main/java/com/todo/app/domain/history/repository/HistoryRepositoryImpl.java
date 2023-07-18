@@ -2,6 +2,7 @@ package com.todo.app.domain.history.repository;
 
 import com.todo.app.domain.history.entity.History;
 import java.util.List;
+import java.util.Map;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -43,6 +44,13 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                 .addValue("count", count + 1);
 
         return template.query(sql.toString(), params, historyRowMapper());
+    }
+
+    @Override
+    public void deleteAll(Long memberId) {
+        String sql = "UPDATE history SET deleted = 1 WHERE member_id = :memberId";
+
+        template.update(sql, Map.of("memberId", memberId));
     }
 
     private RowMapper<History> historyRowMapper() {

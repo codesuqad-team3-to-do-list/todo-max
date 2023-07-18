@@ -6,6 +6,7 @@ import com.todo.app.domain.history.entity.History;
 import com.todo.app.domain.history.service.HistoryService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +21,21 @@ public class HistoryController {
     }
 
     @GetMapping("/api/histories")
-    public ApiResponse<HistoriesResponse> getHistories(
-            @RequestParam(defaultValue = "0") Long historyId,
-            @RequestParam(defaultValue = "10") int count) {
+    public ApiResponse<HistoriesResponse> getHistories(@RequestParam(defaultValue = "0") Long historyId, @RequestParam(defaultValue = "10") int count) {
+        if (historyId == 0L) {
+            historyService.saveAll();
+        }
 
-        List<History> histories = historyService.findHistories(historyId, count);
+        List<History> histories = historyService.findHistories(1L, historyId, count);
 
         return ApiResponse.success(HttpStatus.OK, HistoriesResponse.of(histories, count));
+    }
+
+    @DeleteMapping("/api/histories")
+    public ApiResponse<Void> deleteAll() {
+        historyService.saveAll();
+        historyService.deleteAll(1L);
+
+        return ApiResponse.success(HttpStatus.OK);
     }
 }
