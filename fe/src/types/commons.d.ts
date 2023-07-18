@@ -11,3 +11,5 @@ interface Card {
   title: string;
   content: string;
 }
+
+type Position = { x: number; y: number };

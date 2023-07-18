@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { createGlobalStyle, styled } from 'styled-components';
 import Button from '../Button';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import EditIcon from '../EditIcon';
@@ -8,16 +8,27 @@ type Type = 'default' | 'add' | 'edit' | 'drag' | 'place';
 
 type Props = {
   cardId: number;
-  columnId: number;
+  columnId?: number;
   title: string;
   content: string;
-  type?: Type;
+  onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  drag?: 'true' | 'false';
+  position?: Position;
 };
 
-export default function Card({ cardId, columnId, title, content }: Props) {
+export default function Card({
+  cardId,
+  columnId,
+  title,
+  content,
+  onMouseDown,
+  drag,
+  position,
+}: Props) {
   const [type, setType] = useState<Type>('default');
   const [titleInput, setTitleInput] = useState('');
   const [bodyTextArea, setBodyTextArea] = useState('');
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -46,7 +57,14 @@ export default function Card({ cardId, columnId, title, content }: Props) {
   };
 
   return (
-    <StyledCard cardId={cardId} columnId={columnId} type={type}>
+    <StyledCard
+      className="card"
+      type={type}
+      onMouseDown={onMouseDown}
+      data-card-id={cardId}
+      drag={drag}
+      position={position}
+    >
       <StyledCardContainer>
         <StyledTextArea>
           <StyledContent>
@@ -105,9 +123,9 @@ export default function Card({ cardId, columnId, title, content }: Props) {
 }
 
 interface CardProps {
-  cardId: number;
-  columnId: number;
   type: Type;
+  drag?: 'true' | 'false';
+  position?: Position;
 }
 
 const StyledCard = styled.div<CardProps>`
@@ -123,6 +141,9 @@ const StyledCard = styled.div<CardProps>`
       : props.theme.objectStyles.dropShadow.normal};
   opacity: ${(props) =>
     props.type === 'place' ? props.theme.opacity.disabled : 1};
+  position: ${(props) => props.drag === 'true' && 'fixed'};
+  left: ${(props) => props.position && `${props.position.x}px`};
+  top: ${(props) => props.position && `${props.position.y}px`};
 `;
 
 const StyledCardContainer = styled.div`

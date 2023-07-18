@@ -3,16 +3,17 @@ import Card from './Card';
 import ColumnTitle from './ColumnTitle';
 
 interface Props {
-  onCardMove: (event: MouseEvent) => void;
   onColumnTitleRename: () => void;
   onColumnRemove: () => void;
   column: Column;
+  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export default function Column({
-  column,
   onColumnTitleRename,
   onColumnRemove,
+  column,
+  onMouseDown,
 }: Props) {
   const cardCount = column.cards.length;
 
@@ -26,10 +27,12 @@ export default function Column({
       />
       {column.cards.map((card) => (
         <Card
+          key={card.id}
           cardId={card.id}
           columnId={column.columnId}
           title={card.title}
           content={card.content}
+          onMouseDown={onMouseDown}
         />
       ))}
     </StyledColumn>
