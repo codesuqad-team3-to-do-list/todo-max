@@ -85,13 +85,12 @@ public class CardRepositoryImpl implements CardRepository {
 
     @Override
     public List<Card> findAllBy(Long memberId) {
-        String sql = "SELECT card.id, tdl_column_id, card.title, content, author "
+        String sql = "SELECT card.id, tdl_column_id, card.title, card.weight_value, content, author "
                 + "FROM tdl_card card "
                 + "LEFT JOIN tdl_column as cl "
                 + "ON tdl_column_id = cl.id "
                 + "WHERE card.deleted = 0 "
                 + "AND member_id = :memberId";
-
         return template.query(sql, Map.of("memberId", memberId), cardRowMapper());
     }
 
