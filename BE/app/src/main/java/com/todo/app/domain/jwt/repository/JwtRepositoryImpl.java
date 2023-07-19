@@ -19,7 +19,11 @@ public class JwtRepositoryImpl implements JwtRepository {
     public Member findBy(String email) {
         String sql = "SELECT id, email, password, create_datetime FROM member WHERE email = :email";
 
-        return template.queryForObject(sql, Map.of("email", email), memberRowMapper());
+        try {
+            return template.queryForObject(sql, Map.of("email", email), memberRowMapper());
+        } catch (DataAccessException e) {
+            return null;
+        }
     }
 
     public Member findByRefreshToken(String refreshToken) {

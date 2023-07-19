@@ -1,4 +1,4 @@
-package com.todo.app.common.aop.jwt;
+package com.todo.app.common.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todo.app.common.ApiResponse;
@@ -35,6 +35,10 @@ public class JwtAuthorizationFilter implements Filter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
+        if (httpServletRequest.getMethod().equals("OPTIONS")) {
+            return;
+        }
+
         if(whiteListCheck(httpServletRequest.getRequestURI())){
             chain.doFilter(request, response);
             return;
@@ -66,7 +70,7 @@ public class JwtAuthorizationFilter implements Filter {
 
     private String getToken(HttpServletRequest request){
         String authorization = request.getHeader("Authorization");
-        return authorization.substring(7);
+        return authorization.substring(7).replace("\"", "");
     }
 
     private void sendErrorApiResponse(ServletResponse response, RuntimeException e) throws IOException {
