@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 import UserInput from '../components/UserInput';
+import { useNavigate } from 'react-router-dom';
 
 type Type = 'login' | 'signUp';
 
@@ -13,6 +14,7 @@ export default function Sign({ type }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [checkPassword, setCheckPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSetEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -32,15 +34,20 @@ export default function Sign({ type }: Props) {
   const isEmptyEmail = email.length === 0;
   const isEmptyPassword = password.length === 0;
 
-  const onSubmit = () => {
-    return {
-      email: email,
-      password: password,
-    };
+  const onLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const tokens = await authenticateUser(email, password);
+      storeTokenInLocalStorage(tokens);
+      navigate('/');
+    } catch (error) {
+      console.error('An error occurred during authentication:', error);
+    }
   };
 
   return (
-    <StyledLoginForm action="/" method="POST" onSubmit={onSubmit}>
+    <StyledLoginForm action="/" method="POST" onSubmit={onLogin}>
       <StyledTitle type={type}>
         {type === 'login' ? '로그인' : '회원가입'}
       </StyledTitle>
@@ -67,13 +74,14 @@ export default function Sign({ type }: Props) {
           : ''}
       </StyledValidInfo>
 
+      <StyledButton type="login">
+        {/* <StyledButton type="login" disabled={!isButtonActive}> */}
+        로그인
+      </StyledButton>
+
       <StyledSignUpLink to={'/sign-up'}>
         <StyledButton type="signUp">회원가입</StyledButton>
       </StyledSignUpLink>
-
-      <StyledButton type="login" disabled={!isButtonActive}>
-        로그인
-      </StyledButton>
     </StyledLoginForm>
   );
 }
@@ -84,6 +92,39 @@ const regex = {
   email: /^[a-z0-9]+@[a-z]+\.[a-z]+$/,
   password:
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+])(?!.*[^a-zA-Z0-9$`~!@$!%*#^?&\\(\\)\-_=+]).{8,20}$/,
+};
+
+const authenticateUser = async (email: string, password: string) => {
+  const url = new URL('/api/login', import.meta.env.VITE_APP_BASE_URL);
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  };
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    throw new Error('로그인 실패');
+  }
+
+  const data = await response.json();
+  const tokens = data.message;
+
+  return tokens;
+};
+
+const storeTokenInLocalStorage = (tokens: {
+  accessToken: string;
+  refreshToken: string;
+}) => {
+  Object.entries(tokens).forEach(([key, value]) => {
+    localStorage.setItem(key, JSON.stringify(value));
+  });
 };
 
 const StyledLoginForm = styled.form`
