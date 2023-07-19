@@ -1,3 +1,7 @@
+interface ImportMeta {
+  env: ImportMetaEnv;
+}
+
 type Columns = Column[] | undefined;
 
 interface Column {
