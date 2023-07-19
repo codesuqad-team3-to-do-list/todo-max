@@ -7,7 +7,9 @@ interface Props {
   onColumnRemove: () => void;
   column: Column;
   onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
-  onEditConfirm: (updatedCard: Update) => void;
+  onCardRegister: (updatedCard: Card) => void;
+  onCardRemove: (cardId: number | undefined) => void;
+  onCardAdd: (columnId: number) => void;
 }
 
 export default function Column({
@@ -15,17 +17,21 @@ export default function Column({
   onColumnRemove,
   column,
   onMouseDown,
-  onEditConfirm,
+  onCardRegister,
+  onCardRemove,
+  onCardAdd,
 }: Props) {
   const cardCount = column.cards.length;
 
   return (
     <StyledColumn>
       <ColumnTitle
+        columnId={column.columnId}
         cardCount={cardCount}
         title={column.columnTitle}
         onColumnTitleRename={onColumnTitleRename}
         onColumnRemove={onColumnRemove}
+        onCardAdd={onCardAdd}
       />
       {column.cards.map((card) => (
         <Card
@@ -35,7 +41,8 @@ export default function Column({
           title={card.title}
           content={card.content}
           onMouseDown={onMouseDown}
-          onEditConfirm={onEditConfirm}
+          onCardRegister={onCardRegister}
+          onCardRemove={onCardRemove}
         />
       ))}
     </StyledColumn>

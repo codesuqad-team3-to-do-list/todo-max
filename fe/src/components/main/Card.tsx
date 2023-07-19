@@ -14,7 +14,8 @@ type Props = {
   onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
   drag?: 'true' | 'false';
   position?: Position;
-  onEditConfirm: (updatedCard: Update) => void;
+  onCardRegister: (updatedCard: Card) => void;
+  onCardRemove: (cardId: number | undefined) => void;
 };
 export default function Card({
   cardId,
@@ -24,9 +25,12 @@ export default function Card({
   onMouseDown,
   drag,
   position,
-  onEditConfirm,
+  onCardRegister,
+  onCardRemove,
 }: Props) {
-  const [type, setType] = useState<Type>('default');
+  const [type, setType] = useState<Type>(() =>
+    title || content ? 'default' : 'add'
+  );
   const [titleInput, setTitleInput] = useState('');
   const [bodyTextArea, setBodyTextArea] = useState('');
 
@@ -47,8 +51,6 @@ export default function Card({
     }px`;
   }, [bodyTextArea]);
 
-  const isNotEdit = titleInput === title && bodyTextArea === content;
-
   const onCardEdit = () => {
     setType('edit');
 
@@ -60,9 +62,20 @@ export default function Card({
     setBodyTextArea(content);
   };
 
-  const onEditClose = () => {
+  const onCardRegisterClose = () => {
+    if (type === 'add') {
+      onCardRemove(cardId);
+    }
+
     setType('default');
   };
+
+  const onCardRegisterConfirm = () => {
+    setType('default');
+    onCardRegister(updatedCard);
+  };
+
+  const isNotEdit = titleInput === title && bodyTextArea === content;
 
   const updatedCard = {
     id: cardId,
@@ -130,14 +143,18 @@ export default function Card({
           )}
           {(type === 'add' || type === 'edit') && (
             <StyledButtonContainer>
-              <Button variant="gray" pattern="text" onClick={onEditClose}>
+              <Button
+                variant="gray"
+                pattern="text"
+                onClick={onCardRegisterClose}
+              >
                 <span>취소</span>
               </Button>
               <Button
                 variant="blue"
                 pattern="text"
                 disabled={isNotEdit}
-                onClick={() => onEditConfirm(updatedCard)}
+                onClick={onCardRegisterConfirm}
               >
                 <span>등록</span>
               </Button>
@@ -149,7 +166,11 @@ export default function Card({
             <Button pattern="icon" iconHoverColor="blue" onClick={onCardEdit}>
               <EditIcon />
             </Button>
-            <Button pattern="icon" iconHoverColor="red">
+            <Button
+              pattern="icon"
+              iconHoverColor="red"
+              onClick={() => onCardRemove(cardId)}
+            >
               <ClosedIcon />
             </Button>
           </StyledIconArea>

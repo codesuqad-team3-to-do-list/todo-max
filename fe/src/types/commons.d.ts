@@ -11,15 +11,9 @@ interface Column {
 }
 
 interface Card {
-  id: number;
+  id?: number;
   title: string;
   content: string;
 }
 
 type Position = { x: number; y: number };
-
-type Update = {
-  id?: number;
-  title: string;
-  content: string;
-};

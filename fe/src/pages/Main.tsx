@@ -14,55 +14,15 @@ export default function Main({}: Props) {
   const dragData = useRef<Card>();
   const dragElement = useRef<Element>();
   const startPosition = useRef<Position>();
-  const url = import.meta.env.VITE_APP_BASE_URL;
-
-  const onEditConfirm = (updatedCard: Update) => {
-    fetch(`${url}/api/cards/${updatedCard.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedCard),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        if (columns) {
-          const newColumns = [...columns].map((column) => {
-            column.cards.map((card) => {
-              card.id === updatedCard.id ? updatedCard : card;
-            });
-          });
-
-          setColumns(newColumns);
-        }
-      })
-      .catch((error) => {
-        console.error('Error updating card:', error);
-      });
-  };
-
-  const onCardRemove = (cardId: number) => {};
+  const isMousePressed = useRef<boolean>(false);
 
   useEffect(() => {
     fetchColumns();
   }, []);
 
   const fetchColumns = async () => {
-    const options = {
-      method: 'GET',
-      headers: {
-        Authorization:
-          'Bearer ' +
-          `eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwiZXhwIjoxNjg5Njc2ODgwfQ.mWX7bWPZ3Ezjr-t7J77_8UUQjKqm6WnyZWYTj0UM1EM`,
-        'Content-Type': 'application/json',
-      },
-    };
-    console.log(options);
     try {
-      const response = await fetch(`${url}/api/columns`, options);
+      const response = await fetch(`/api/columns`);
       if (!response.ok) {
         throw new Error('Failed to fetch columns');
       }
@@ -73,12 +33,83 @@ export default function Main({}: Props) {
     }
   };
 
-  const onCardAdd = () => {};
+  const onCardAdd = (columnId: number) => {
+    if (!columns) {
+      return;
+    }
+
+    setColumns((prevColumns) => {
+      if (!prevColumns) {
+        return;
+      }
+
+      const newCard = {
+        id: Date.now(),
+        title: '',
+        content: '',
+      };
+
+      return prevColumns.map((column) => {
+        if (column.columnId === columnId) {
+          return {
+            ...column,
+            cards: [newCard, ...column.cards],
+          };
+        }
+
+        return column;
+      });
+    });
+  };
+
+  const onCardRegister = (updatedCard: Card) => {
+    if (!columns) {
+      return;
+    }
+
+    setColumns((prevColumns) => {
+      if (!prevColumns) {
+        return;
+      }
+
+      return prevColumns.map((column) => {
+        if (!updatedCard.id) {
+          return {
+            ...column,
+            cards: [updatedCard, ...column.cards],
+          };
+        }
+
+        return {
+          ...column,
+          cards: column.cards.map((card) =>
+            card.id === updatedCard.id ? updatedCard : card
+          ),
+        };
+      });
+    });
+  };
+
+  const onCardRemove = (cardId: number | undefined) => {
+    if (!columns) {
+      return;
+    }
+
+    setColumns((prevColumns) => {
+      if (!prevColumns) {
+        return prevColumns;
+      }
+
+      return prevColumns.map((column) => ({
+        ...column,
+        cards: column.cards.filter((card) => card.id !== cardId),
+      }));
+    });
+  };
 
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-
-    const target = e.target;
+    isMousePressed.current = true;
+    const target = e.currentTarget;
 
     if (target instanceof HTMLElement) {
       const targetElement = target.closest('.card');
@@ -95,14 +126,17 @@ export default function Main({}: Props) {
     }
   };
 
-  const onMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseUp = () => {
+    isMousePressed.current = false;
     setIsDragging(false);
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging) {
+    if (!isMousePressed.current) {
       return;
     }
+
+    setIsDragging(true);
 
     if (dragElement.current && startPosition.current) {
       const dragElem = dragElement.current.getBoundingClientRect();
@@ -127,7 +161,9 @@ export default function Main({}: Props) {
             onColumnRemove={onColumnRemove}
             onMouseDown={onMouseDown}
             column={column}
-            onEditConfirm={onEditConfirm}
+            onCardRegister={onCardRegister}
+            onCardRemove={onCardRemove}
+            onCardAdd={onCardAdd}
           />
         ))}
 
@@ -138,7 +174,8 @@ export default function Main({}: Props) {
           content={dragData.current.content}
           drag={'true'}
           position={mousePosition}
-          onEditConfirm={onEditConfirm}
+          onCardRegister={onCardRegister}
+          onCardRemove={onCardRemove}
         />
       )}
     </StyledMain>
