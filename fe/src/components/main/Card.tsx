@@ -1,4 +1,4 @@
-import { createGlobalStyle, styled } from 'styled-components';
+import { styled } from 'styled-components';
 import Button from '../Button';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import EditIcon from '../EditIcon';
@@ -7,15 +7,15 @@ import ClosedIcon from '../ClosedIcon';
 type Type = 'default' | 'add' | 'edit' | 'drag' | 'place';
 
 type Props = {
-  cardId: number;
+  cardId?: number;
   columnId?: number;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
   onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
   drag?: 'true' | 'false';
   position?: Position;
+  onEditConfirm: (updatedCard: Update) => void;
 };
-
 export default function Card({
   cardId,
   columnId,
@@ -24,6 +24,7 @@ export default function Card({
   onMouseDown,
   drag,
   position,
+  onEditConfirm,
 }: Props) {
   const [type, setType] = useState<Type>('default');
   const [titleInput, setTitleInput] = useState('');
@@ -46,14 +47,27 @@ export default function Card({
     }px`;
   }, [bodyTextArea]);
 
-  const isNotEdit = !titleInput.length || !bodyTextArea.length;
+  const isNotEdit = titleInput === title && bodyTextArea === content;
 
   const onCardEdit = () => {
     setType('edit');
+
+    if (!title || !content) {
+      return;
+    }
+
+    setTitleInput(title);
+    setBodyTextArea(content);
   };
 
-  const onCardEditClose = () => {
+  const onEditClose = () => {
     setType('default');
+  };
+
+  const updatedCard = {
+    id: cardId,
+    title: titleInput,
+    content: bodyTextArea,
   };
 
   return (
@@ -68,7 +82,25 @@ export default function Card({
       <StyledCardContainer>
         <StyledTextArea>
           <StyledContent>
-            {type === 'add' || type === 'edit' ? (
+            {type === 'add' ? (
+              <>
+                <StyledTitleInput
+                  value={titleInput}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setTitleInput(event.target.value)
+                  }
+                  placeholder="제목을 입력하세요"
+                />
+                <StyledBodyTextarea
+                  value={bodyTextArea}
+                  onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                    setBodyTextArea(event.target.value)
+                  }
+                  placeholder="내용을 입력하세요"
+                  ref={textareaRef}
+                />
+              </>
+            ) : type === 'edit' ? (
               <>
                 <StyledTitleInput
                   value={titleInput}
@@ -98,10 +130,15 @@ export default function Card({
           )}
           {(type === 'add' || type === 'edit') && (
             <StyledButtonContainer>
-              <Button variant="gray" pattern="text" onClick={onCardEditClose}>
+              <Button variant="gray" pattern="text" onClick={onEditClose}>
                 <span>취소</span>
               </Button>
-              <Button variant="blue" pattern="text" disabled={isNotEdit}>
+              <Button
+                variant="blue"
+                pattern="text"
+                disabled={isNotEdit}
+                onClick={() => onEditConfirm(updatedCard)}
+              >
                 <span>등록</span>
               </Button>
             </StyledButtonContainer>

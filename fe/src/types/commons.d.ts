@@ -17,3 +17,9 @@ interface Card {
 }
 
 type Position = { x: number; y: number };
+
+type Update = {
+  id?: number;
+  title: string;
+  content: string;
+};

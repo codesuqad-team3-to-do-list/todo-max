@@ -14,6 +14,66 @@ export default function Main({}: Props) {
   const dragData = useRef<Card>();
   const dragElement = useRef<Element>();
   const startPosition = useRef<Position>();
+  const url = import.meta.env.VITE_APP_BASE_URL;
+
+  const onEditConfirm = (updatedCard: Update) => {
+    fetch(`${url}/api/cards/${updatedCard.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedCard),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        if (columns) {
+          const newColumns = [...columns].map((column) => {
+            column.cards.map((card) => {
+              card.id === updatedCard.id ? updatedCard : card;
+            });
+          });
+
+          setColumns(newColumns);
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating card:', error);
+      });
+  };
+
+  const onCardRemove = (cardId: number) => {};
+
+  useEffect(() => {
+    fetchColumns();
+  }, []);
+
+  const fetchColumns = async () => {
+    const options = {
+      method: 'GET',
+      headers: {
+        Authorization:
+          'Bearer ' +
+          `eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwiZXhwIjoxNjg5Njc2ODgwfQ.mWX7bWPZ3Ezjr-t7J77_8UUQjKqm6WnyZWYTj0UM1EM`,
+        'Content-Type': 'application/json',
+      },
+    };
+    console.log(options);
+    try {
+      const response = await fetch(`${url}/api/columns`, options);
+      if (!response.ok) {
+        throw new Error('Failed to fetch columns');
+      }
+      const columns = await response.json();
+      setColumns(columns.data);
+    } catch (error) {
+      console.error('Error fetching columns:', error);
+    }
+  };
+
+  const onCardAdd = () => {};
 
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging(true);
@@ -54,23 +114,6 @@ export default function Main({}: Props) {
     }
   };
 
-  useEffect(() => {
-    fetchColumns();
-  }, []);
-
-  const fetchColumns = async () => {
-    try {
-      const response = await fetch('/api/columns');
-      if (!response.ok) {
-        throw new Error('Failed to fetch columns');
-      }
-      const columns = await response.json();
-      setColumns(columns.data);
-    } catch (error) {
-      console.error('Error fetching columns:', error);
-    }
-  };
-
   const onColumnTitleRename = () => {};
   const onColumnRemove = () => {};
 
@@ -84,6 +127,7 @@ export default function Main({}: Props) {
             onColumnRemove={onColumnRemove}
             onMouseDown={onMouseDown}
             column={column}
+            onEditConfirm={onEditConfirm}
           />
         ))}
 
@@ -94,6 +138,7 @@ export default function Main({}: Props) {
           content={dragData.current.content}
           drag={'true'}
           position={mousePosition}
+          onEditConfirm={onEditConfirm}
         />
       )}
     </StyledMain>

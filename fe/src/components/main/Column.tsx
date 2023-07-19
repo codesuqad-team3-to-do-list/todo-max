@@ -7,6 +7,7 @@ interface Props {
   onColumnRemove: () => void;
   column: Column;
   onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onEditConfirm: (updatedCard: Update) => void;
 }
 
 export default function Column({
@@ -14,6 +15,7 @@ export default function Column({
   onColumnRemove,
   column,
   onMouseDown,
+  onEditConfirm,
 }: Props) {
   const cardCount = column.cards.length;
 
@@ -33,6 +35,7 @@ export default function Column({
           title={card.title}
           content={card.content}
           onMouseDown={onMouseDown}
+          onEditConfirm={onEditConfirm}
         />
       ))}
     </StyledColumn>
