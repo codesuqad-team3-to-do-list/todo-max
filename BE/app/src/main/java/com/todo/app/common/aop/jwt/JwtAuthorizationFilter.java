@@ -70,7 +70,7 @@ public class JwtAuthorizationFilter implements Filter {
 
     private String getToken(HttpServletRequest request){
         String authorization = request.getHeader("Authorization");
-        return authorization.substring(7);
+        return authorization.substring(7).replace("\"", "");
     }
 
     private void sendErrorApiResponse(ServletResponse response, RuntimeException e) throws IOException {
