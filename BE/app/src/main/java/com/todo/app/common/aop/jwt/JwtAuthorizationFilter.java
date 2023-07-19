@@ -35,6 +35,10 @@ public class JwtAuthorizationFilter implements Filter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
+        if (httpServletRequest.getMethod().equals("OPTIONS")) {
+            return;
+        }
+
         if(whiteListCheck(httpServletRequest.getRequestURI())){
             chain.doFilter(request, response);
             return;
