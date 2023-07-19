@@ -34,7 +34,7 @@ public class JwtController {
     @PostMapping("/api/signin")
     public ApiResponse<Void> signIn(@RequestBody SignInRequest request) {
         jwtService.signIn(request.getEmail(), request.getPassword());
-        return ApiResponse.success(HttpStatus.OK);
+        return ApiResponse.success(HttpStatus.CREATED);
     }
 
     @PostMapping("/api/auth/refresh-access-token")
