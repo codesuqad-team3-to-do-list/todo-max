@@ -26,7 +26,7 @@ public class JwtService {
         Member member = jwtRepository.findBy(email);
 
         if(!verifyPassword(member, password)) {
-            throw new IllegalPasswordException(member.getId());
+            throw new IllegalPasswordException();
         }
 
         Jwt jwt = jwtProvider.createJwt(generateMemberClaims(member));
@@ -54,7 +54,7 @@ public class JwtService {
     }
 
     private boolean verifyPassword(Member member, String password) {
-        return member.getPassword().equals(password);
+        return member != null && member.getPassword().equals(password);
     }
 
 }
