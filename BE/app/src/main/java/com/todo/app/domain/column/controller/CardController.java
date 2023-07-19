@@ -10,6 +10,7 @@ import com.todo.app.domain.column.service.CardService;
 import com.todo.app.domain.history.entity.Action;
 import com.todo.app.domain.history.entity.History;
 import com.todo.app.domain.history.service.HistoryService;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,29 +31,33 @@ public class CardController {
     }
 
     @PostMapping("/api/columns/{columnId}/cards")
-    public ApiResponse<CardResponse> createCard(@RequestBody CardCreateRequest createRequest, @PathVariable Long columnId) {
+    public ApiResponse<CardResponse> createCard(@RequestBody CardCreateRequest createRequest,
+                                                @PathVariable Long columnId, HttpServletRequest request) {
         final Card card = cardService.create(createRequest.toCardCreate(columnId));
 
-        historyService.cache(createRequest.toHistory(1L));
+        historyService.save(createRequest.toHistory(Long.valueOf(String.valueOf(request.getAttribute("memberId")))));
 
         return ApiResponse.success(HttpStatus.OK, CardResponse.from(card));
     }
 
     @PatchMapping("/api/cards/{cardId}")
-    public ApiResponse<Void> updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequest updateRequest) {
+    public ApiResponse<Void> updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequest updateRequest,
+                                        HttpServletRequest request) {
         cardService.update(updateRequest.toCardUpdate());
-        historyService.cache(updateRequest.toHistory(1L));
+        historyService.save(updateRequest.toHistory(Long.valueOf(String.valueOf(request.getAttribute("memberId")))));
 
         return ApiResponse.success(HttpStatus.OK);
     }
 
     @PatchMapping("/api/columns/{columnId}/cards/{cardId}")
-    public ApiResponse<Void> moveCard(@PathVariable Long columnId, @PathVariable Long cardId, @RequestBody CardMoveRequest request) {
-        final Card card = request.toCardMove();
-        cardService.move(card, request.getPreviousCardId(), request.getNextCardId());
+    public ApiResponse<Void> moveCard(@PathVariable Long columnId, @PathVariable Long cardId,
+                                      @RequestBody CardMoveRequest moveRequest,
+                                      HttpServletRequest request) {
+        final Card card = moveRequest.toCardMove();
+        cardService.move(card, moveRequest.getPreviousCardId(), moveRequest.getNextCardId());
 
-        if (request.isMovedColumn(columnId)) {
-            historyService.cache(request.toHistory(1L));
+        if (moveRequest.isMovedColumn(columnId)) {
+            historyService.save(moveRequest.toHistory((Long.valueOf(String.valueOf(request.getAttribute("memberId"))))));
         }
 
         return ApiResponse.success(HttpStatus.OK);
@@ -62,7 +67,13 @@ public class CardController {
     public ApiResponse<Void> deleteCard(@PathVariable Long columnId, @PathVariable Long cardId) {
         final String deletedCardTitle = cardService.delete(cardId);
 
-        historyService.cache(new History(1L, Action.DELETE.name(), deletedCardTitle));
+        historyService.save(
+                new History(
+                        Long.valueOf(String.valueOf(request.getAttribute("memberId"))),
+                        Action.DELETE.name(),
+                        deletedCardTitle
+                )
+        );
 
         return ApiResponse.success(HttpStatus.OK);
     }
