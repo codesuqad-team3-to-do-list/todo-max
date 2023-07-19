@@ -67,12 +67,11 @@ public class CardServiceImpl implements CardService {
         final List<Long> weightValues = cardRepository.findWeightsBy(previousCardId, nextCardId);
 
         if (previousCardId == 0L) {
-            return List.of(0L, weightValues.get(0));
+            final Long firstCardWeightValue = weightValues.get(0);
+            return List.of(firstCardWeightValue + (WEIGHT_VALUE_INTERVAL * 2), firstCardWeightValue);
         }
         if (nextCardId == 0L) {
-            final Long lastCardWeightValue = weightValues.get(0);
-
-            return List.of(lastCardWeightValue, lastCardWeightValue + (WEIGHT_VALUE_INTERVAL * 2));
+            return List.of(weightValues.get(0), 0L);
         }
 
         return weightValues;
@@ -80,11 +79,11 @@ public class CardServiceImpl implements CardService {
 
     public void resizeAllWeightValues(final Long columnId) {
         final List<Card> cards = cardRepository.findCardsBy(columnId);
-        long weightValue = WEIGHT_VALUE_INTERVAL;
+        long weightValue = WEIGHT_VALUE_INTERVAL * cards.size();
 
         for (Card card : cards) {
             card.assignWeightValue(weightValue);
-            weightValue += WEIGHT_VALUE_INTERVAL;
+            weightValue -= WEIGHT_VALUE_INTERVAL;
         }
 
         cardRepository.updateWeightValueCards(cards);
@@ -94,6 +93,6 @@ public class CardServiceImpl implements CardService {
         final Long previousWeightValue = weightValues.get(0);
         final Long nextWeightValue = weightValues.get(1);
 
-        return (nextWeightValue - previousWeightValue) <= 1L;
+        return (previousWeightValue - nextWeightValue) <= 1L;
     }
 }

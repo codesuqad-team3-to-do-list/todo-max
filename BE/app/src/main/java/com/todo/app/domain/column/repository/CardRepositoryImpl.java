@@ -90,7 +90,8 @@ public class CardRepositoryImpl implements CardRepository {
                 + "LEFT JOIN tdl_column as cl "
                 + "ON tdl_column_id = cl.id "
                 + "WHERE card.deleted = 0 "
-                + "AND member_id = :memberId";
+                + "AND member_id = :memberId "
+                + "ORDER BY weight_value desc";
 
         return template.query(sql, Map.of("memberId", memberId), cardRowMapper());
     }
