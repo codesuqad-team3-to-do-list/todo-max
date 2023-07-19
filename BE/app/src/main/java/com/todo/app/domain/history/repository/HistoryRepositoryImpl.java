@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -18,13 +18,12 @@ public class HistoryRepositoryImpl implements HistoryRepository {
         this.template = template;
     }
 
-    @Override
-    public void saveAll(List<History> histories) {
+     public void save(History history) {
         String sql = "INSERT INTO history (member_id, action, tdl_card_title, tdl_column_previous_title, tdl_column_current_title, action_datetime) "
-                + " VALUES (:memberId, :action, :cardTitle, :prevColumnTitle, :currentColumnTitle, :actionDatetime)";
+                + "VALUE (:memberId, :action, :cardTitle, :prevColumnTitle, :currentColumnTitle, :actionDatetime)";
 
-        template.batchUpdate(sql, SqlParameterSourceUtils.createBatch(histories));
-    }
+        template.update(sql, historySqlParameterSource(history));
+     }
 
     @Override
     public List<History> findHistories(Long memberId, Long historyId, int count) {
