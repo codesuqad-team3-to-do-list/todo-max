@@ -1,4 +1,4 @@
-package com.todo.app.common.aop.jwt;
+package com.todo.app.common.filter;
 
 import java.io.IOException;
 import javax.servlet.Filter;

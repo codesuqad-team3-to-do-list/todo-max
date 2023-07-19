@@ -1,4 +1,4 @@
-package com.todo.app.common.aop.jwt;
+package com.todo.app.common.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todo.app.common.ApiResponse;
