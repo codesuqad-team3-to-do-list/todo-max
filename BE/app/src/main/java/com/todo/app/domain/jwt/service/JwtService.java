@@ -2,6 +2,7 @@ package com.todo.app.domain.jwt.service;
 
 import com.todo.app.common.exception.IllegalJwtTokenException;
 import com.todo.app.common.exception.IllegalPasswordException;
+import com.todo.app.common.exception.MemberDuplicationException;
 import com.todo.app.domain.jwt.controller.response.JwtTokenType;
 import com.todo.app.domain.jwt.entity.Jwt;
 import com.todo.app.domain.jwt.entity.JwtProvider;
@@ -36,6 +37,15 @@ public class JwtService {
         return jwt;
     }
 
+    public void signIn(String email, String password) {
+
+        if(existMember(jwtRepository.findBy(email))) {
+            throw new MemberDuplicationException(email);
+        }
+
+        jwtRepository.saveMember(email, password);
+    }
+
     @Transactional
     public Jwt renewAccessToken(String refreshToken) {
         jwtProvider.getClaims(refreshToken);
@@ -53,8 +63,12 @@ public class JwtService {
         );
     }
 
+    private boolean existMember(Member member) {
+        return member != null;
+    }
+
     private boolean verifyPassword(Member member, String password) {
-        return member != null && member.getPassword().equals(password);
+        return existMember(member) && member.getPassword().equals(password);
     }
 
 }

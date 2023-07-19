@@ -3,6 +3,7 @@ package com.todo.app.domain.jwt.controller;
 import com.todo.app.common.ApiResponse;
 import com.todo.app.domain.jwt.controller.request.JwtRefreshTokenRequest;
 import com.todo.app.domain.jwt.controller.request.LoginRequest;
+import com.todo.app.domain.jwt.controller.request.SignInRequest;
 import com.todo.app.domain.jwt.controller.response.JwtResponse;
 import com.todo.app.domain.jwt.service.JwtService;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,12 @@ public class JwtController {
                 HttpStatus.OK,
                 JwtResponse.from(jwtService.login(request.getEmail(), request.getPassword()))
         );
+    }
+
+    @PostMapping("/api/signin")
+    public ApiResponse<String> signIn(@RequestBody SignInRequest request) {
+        jwtService.signIn(request.getEmail(), request.getPassword());
+        return ApiResponse.success(HttpStatus.OK, null);
     }
 
     @PostMapping("/api/auth/refresh-access-token")

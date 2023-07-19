@@ -40,6 +40,12 @@ public class JwtRepositoryImpl implements JwtRepository {
         }
     }
 
+    public void saveMember(String email, String password) {
+        String sql = "INSERT INTO member(email, password) VALUE (:email, :password)";
+
+        template.update(sql, Map.of("email", email, "password", password));
+    }
+
     public void saveRefreshToken(String refreshToken, Long memberId) {
         String sql = "INSERT INTO refresh_token(refresh_token, member_id) VALUE (:refreshToken, :memberId) "
                 + "ON DUPLICATE KEY UPDATE refresh_token = :refreshToken";
