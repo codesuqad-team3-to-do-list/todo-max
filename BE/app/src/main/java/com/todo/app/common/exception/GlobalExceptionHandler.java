@@ -41,4 +41,9 @@ public class GlobalExceptionHandler {
         return ApiResponse.exception(jwtExceptionType.getHttpStatus(), new JwtExceptionResponse(jwtExceptionType));
     }
 
+    @ExceptionHandler(MemberDuplicationException.class)
+    public ApiResponse<String> handleException(MemberDuplicationException ex) {
+        return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
+    }
+
 }

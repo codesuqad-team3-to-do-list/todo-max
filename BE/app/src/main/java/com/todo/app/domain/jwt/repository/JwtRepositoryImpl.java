@@ -1,8 +1,10 @@
 package com.todo.app.domain.jwt.repository;
 
+import com.todo.app.common.exception.MemberDuplicationException;
 import com.todo.app.domain.jwt.entity.Member;
 import java.util.Map;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -37,6 +39,16 @@ public class JwtRepositoryImpl implements JwtRepository {
             return template.queryForObject(sql, Map.of("refreshToken", refreshToken), memberRowMapper());
         } catch (DataAccessException e) {
             return null;
+        }
+    }
+
+    public void saveMember(String email, String password) {
+        String sql = "INSERT INTO member(email, password) VALUE (:email, :password)";
+
+        try {
+            template.update(sql, Map.of("email", email, "password", password));
+        } catch (DuplicateKeyException e) {
+            throw new MemberDuplicationException(email);
         }
     }
 
