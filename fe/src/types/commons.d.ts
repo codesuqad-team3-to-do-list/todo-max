@@ -1,3 +1,7 @@
+interface ImportMeta {
+  env: ImportMetaEnv;
+}
+
 type Columns = Column[] | undefined;
 
 interface Column {
@@ -25,3 +29,4 @@ interface HistoryItem {
   currentColumnTitle?: string;
   actionDatetime: string;
 }
+type Position = { x: number; y: number };

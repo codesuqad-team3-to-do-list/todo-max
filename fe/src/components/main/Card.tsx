@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { createGlobalStyle, styled } from 'styled-components';
 import Button from '../Button';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import EditIcon from '../EditIcon';
@@ -7,16 +7,28 @@ import ClosedIcon from '../ClosedIcon';
 type Type = 'default' | 'add' | 'edit' | 'drag' | 'place';
 
 type Props = {
-  id: number;
+  cardId: number;
+  columnId?: number;
   title: string;
   content: string;
-  type?: Type;
+  onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  drag?: 'true' | 'false';
+  position?: Position;
 };
 
-export default function Card({ id, title, content }: Props) {
+export default function Card({
+  cardId,
+  columnId,
+  title,
+  content,
+  onMouseDown,
+  drag,
+  position,
+}: Props) {
   const [type, setType] = useState<Type>('default');
   const [titleInput, setTitleInput] = useState('');
   const [bodyTextArea, setBodyTextArea] = useState('');
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -34,8 +46,25 @@ export default function Card({ id, title, content }: Props) {
     }px`;
   }, [bodyTextArea]);
 
+  const isNotEdit = !titleInput.length || !bodyTextArea.length;
+
+  const onCardEdit = () => {
+    setType('edit');
+  };
+
+  const onCardEditClose = () => {
+    setType('default');
+  };
+
   return (
-    <StyledCard type={type}>
+    <StyledCard
+      className="card"
+      type={type}
+      onMouseDown={onMouseDown}
+      data-card-id={cardId}
+      drag={drag}
+      position={position}
+    >
       <StyledCardContainer>
         <StyledTextArea>
           <StyledContent>
@@ -69,15 +98,23 @@ export default function Card({ id, title, content }: Props) {
           )}
           {(type === 'add' || type === 'edit') && (
             <StyledButtonContainer>
-              <Button text="취소" role="cancel" width="100%" />
-              <Button text="등록" width="100%" />
+              <Button variant="gray" pattern="text" onClick={onCardEditClose}>
+                <span>취소</span>
+              </Button>
+              <Button variant="blue" pattern="text" disabled={isNotEdit}>
+                <span>등록</span>
+              </Button>
             </StyledButtonContainer>
           )}
         </StyledTextArea>
         {type !== 'add' && type !== 'edit' && (
           <StyledIconArea>
-            <ClosedIcon />
-            <EditIcon />
+            <Button pattern="icon" iconHoverColor="blue" onClick={onCardEdit}>
+              <EditIcon />
+            </Button>
+            <Button pattern="icon" iconHoverColor="red">
+              <ClosedIcon />
+            </Button>
           </StyledIconArea>
         )}
       </StyledCardContainer>
@@ -87,6 +124,8 @@ export default function Card({ id, title, content }: Props) {
 
 interface CardProps {
   type: Type;
+  drag?: 'true' | 'false';
+  position?: Position;
 }
 
 const StyledCard = styled.div<CardProps>`
@@ -95,12 +134,16 @@ const StyledCard = styled.div<CardProps>`
   border-radius: 8px;
   gap: 4px;
   user-select: none;
+  background-color: ${(props) => props.theme.colorSystem.surfaceDefault};
   box-shadow: ${(props) =>
     props.type === 'drag'
       ? props.theme.objectStyles.dropShadow.floating
       : props.theme.objectStyles.dropShadow.normal};
   opacity: ${(props) =>
     props.type === 'place' ? props.theme.opacity.disabled : 1};
+  position: ${(props) => props.drag === 'true' && 'fixed'};
+  left: ${(props) => props.position && `${props.position.x}px`};
+  top: ${(props) => props.position && `${props.position.y}px`};
 `;
 
 const StyledCardContainer = styled.div`
@@ -144,6 +187,7 @@ const StyledTitleInput = styled.input`
 const StyledBodyTextarea = styled.textarea`
   font: ${(props) => props.theme.font.displayMD14};
   color: ${(props) => props.theme.colorSystem.textDefault};
+  overflow: hidden;
 `;
 
 const StyledCaption = styled.div`
@@ -154,4 +198,8 @@ const StyledCaption = styled.div`
 const StyledButtonContainer = styled.div`
   display: flex;
   gap: 8px;
+
+  span {
+    font: ${(props) => props.theme.font.displayBold14};
+  }
 `;

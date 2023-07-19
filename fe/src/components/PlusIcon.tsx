@@ -1,4 +1,4 @@
-interface Props {
+interface IconProps {
   width?: string;
   height?: string;
   fill?: string;
@@ -8,7 +8,7 @@ export default function PlusIcon({
   width = '24px',
   height = width,
   fill = '#6E7191',
-}: Props) {
+}: IconProps) {
   return (
     <svg
       width={width}

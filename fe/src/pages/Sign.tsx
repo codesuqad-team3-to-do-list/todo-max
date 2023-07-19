@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 import UserInput from '../components/UserInput';
-import Button from '../components/Button';
+import { useNavigate } from 'react-router-dom';
 
 type Type = 'login' | 'signUp';
 
@@ -13,7 +13,8 @@ interface Props {
 export default function Sign({ type }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [checkPassword, setCheckPassword] = useState('');
+  // const [checkPassword, setCheckPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSetEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -33,15 +34,20 @@ export default function Sign({ type }: Props) {
   const isEmptyEmail = email.length === 0;
   const isEmptyPassword = password.length === 0;
 
-  const onSubmit = () => {
-    return {
-      email: email,
-      password: password,
-    };
+  const onLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const tokens = await authenticateUser(email, password);
+      storeTokenInLocalStorage(tokens);
+      navigate('/');
+    } catch (error) {
+      console.error('An error occurred during authentication:', error);
+    }
   };
 
   return (
-    <StyledLoginForm action="/" method="POST" onSubmit={onSubmit}>
+    <StyledLoginForm action="/" method="POST" onSubmit={onLogin}>
       <StyledTitle type={type}>
         {type === 'login' ? '로그인' : '회원가입'}
       </StyledTitle>
@@ -68,32 +74,55 @@ export default function Sign({ type }: Props) {
           : ''}
       </StyledValidInfo>
 
-      <StyledSignUpLink to={'/sign-up'}>
-        <Button
-          role="sign-up"
-          text="회원가입"
-          width="100%"
-          height="30px"
-          shadow="up"
-        />
-      </StyledSignUpLink>
+      <StyledButton type="login">
+        {/* <StyledButton type="login" disabled={!isButtonActive}> */}
+        로그인
+      </StyledButton>
 
-      <Button
-        text="로그인"
-        height="50px"
-        disabled={!isButtonActive}
-        shadow="up"
-      />
+      <StyledSignUpLink to={'/sign-up'}>
+        <StyledButton type="signUp">회원가입</StyledButton>
+      </StyledSignUpLink>
     </StyledLoginForm>
   );
 }
 
 const regex = {
-  // 이메일: 소문자or숫자@소문자.소문자
-  // 비밀번호: 소문자, 대문자, 숫자, 특수문자 최소 1개 이상 + 8자 이상 20자 이하
-  email: /^[a-z0-9]+@[a-z]+\.[a-z]+$/,
+  email: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,}$/,
   password:
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+])(?!.*[^a-zA-Z0-9$`~!@$!%*#^?&\\(\\)\-_=+]).{8,20}$/,
+};
+
+const authenticateUser = async (email: string, password: string) => {
+  const url = new URL('/api/login', import.meta.env.VITE_APP_BASE_URL);
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  };
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    throw new Error('로그인 실패');
+  }
+
+  const data = await response.json();
+  const tokens = data.message;
+
+  return tokens;
+};
+
+const storeTokenInLocalStorage = (tokens: {
+  accessToken: string;
+  refreshToken: string;
+}) => {
+  Object.entries(tokens).forEach(([key, value]) => {
+    localStorage.setItem(key, JSON.stringify(value));
+  });
 };
 
 const StyledLoginForm = styled.form`
@@ -103,7 +132,7 @@ const StyledLoginForm = styled.form`
   flex-direction: column;
   width: 400px;
   height: auto;
-  margin: 10% auto 0;
+  margin: 30px auto 0;
   padding: 40px;
   box-sizing: border-box;
 `;
@@ -120,6 +149,7 @@ const StyledTitle = styled.h2<StyledTitleProps>`
 `;
 
 const StyledSignUpLink = styled(Link)`
+  display: block;
   margin: 20px 0;
 
   & *:hover {
@@ -127,21 +157,33 @@ const StyledSignUpLink = styled(Link)`
   }
 `;
 
-const StyledLoginButton = styled.button`
+interface StyledButton {
+  type: 'login' | 'signUp';
+  disabled?: boolean;
+}
+
+const StyledButton = styled.button<StyledButton>`
+  height: ${(props) => (props.type === 'login' ? '50px' : '40px')};
+  color: ${(props) =>
+    props.type === 'login'
+      ? props.theme.colorSystem.textWhiteDefault
+      : props.theme.colorSystem.textDefault};
+  background-color: ${(props) =>
+    props.type === 'login'
+      ? props.theme.colorSystem.surfaceBrand
+      : props.theme.colorSystem.surfaceDefault};
   font: ${(props) => props.theme.font.displayBold16};
-  color: ${(props) => props.theme.colorSystem.textWhiteDefault};
-  background-color: ${(props) => props.theme.colorSystem.surfaceBrand};
   border-radius: ${(props) => props.theme.objectStyles.radius.s};
-  box-shadow: ${(props) => props.theme.objectStyles.dropShadow.up};
-  height: 50px;
+  box-shadow: ${(props) => props.theme.objectStyles.dropShadow.normal};
+  width: 100%;
   margin-top: 20px;
 
   &:disabled {
-    background-color: rgba(0, 122, 255, 0.3);
+    opacity: ${(props) => props.theme.opacity.disabled};
   }
 
   &:hover {
-    background-color: rgba(0, 122, 255, 0.8);
+    opacity: ${(props) => props.theme.opacity.hover};
   }
 `;
 
