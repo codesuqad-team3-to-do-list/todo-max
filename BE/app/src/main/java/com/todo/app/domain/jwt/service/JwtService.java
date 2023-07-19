@@ -37,7 +37,7 @@ public class JwtService {
         return jwt;
     }
 
-    public void signIn(String email, String password) {
+    public void signup(String email, String password) {
 
         if(existMember(jwtRepository.findBy(email))) {
             throw new MemberDuplicationException(email);

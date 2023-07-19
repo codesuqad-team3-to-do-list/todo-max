@@ -31,9 +31,9 @@ public class JwtController {
         );
     }
 
-    @PostMapping("/api/signin")
-    public ApiResponse<Void> signIn(@RequestBody SignInRequest request) {
-        jwtService.signIn(request.getEmail(), request.getPassword());
+    @PostMapping("/api/signup")
+    public ApiResponse<Void> signup(@RequestBody SignInRequest request) {
+        jwtService.signup(request.getEmail(), request.getPassword());
         return ApiResponse.success(HttpStatus.CREATED);
     }
 
