@@ -9,11 +9,11 @@ public class ApiResponse<T> {
     private int statusCode;
 
     @JsonInclude(Include.NON_NULL)
-    private T message;
+    private T data;
 
-    public ApiResponse(HttpStatus status, T message) {
+    public ApiResponse(HttpStatus status, T data) {
         this.statusCode = status.value();
-        this.message = message;
+        this.data = data;
     }
 
     public ApiResponse(int statusCode) {
@@ -24,16 +24,16 @@ public class ApiResponse<T> {
         return statusCode;
     }
 
-    public T getMessage() {
-        return message;
+    public T getData() {
+        return data;
     }
 
-    public static <T> ApiResponse<T> success(HttpStatus status, T message) {
-        return new ApiResponse<>(status, message);
+    public static <T> ApiResponse<T> success(HttpStatus status, T data) {
+        return new ApiResponse<>(status, data);
     }
 
-    public static <String> ApiResponse<String> exception(HttpStatus status, String message) {
-        return new ApiResponse<>(status, message);
+    public static <String> ApiResponse<String> exception(HttpStatus status, String data) {
+        return new ApiResponse<>(status, data);
     }
 
     public static ApiResponse<Void> success(HttpStatus status) {
