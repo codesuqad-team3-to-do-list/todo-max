@@ -64,7 +64,8 @@ public class CardController {
     }
 
     @DeleteMapping("/api/columns/{columnId}/cards/{cardId}")
-    public ApiResponse<Void> deleteCard(@PathVariable Long columnId, @PathVariable Long cardId) {
+    public ApiResponse<Void> deleteCard(@PathVariable Long columnId, @PathVariable Long cardId,
+                                        HttpServletRequest request) {
         final String deletedCardTitle = cardService.delete(cardId);
 
         historyService.save(
