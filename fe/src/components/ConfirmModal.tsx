@@ -18,11 +18,12 @@ export default function ConfirmModal({
       <StyledModal>
         <StyledModalBody>{children}</StyledModalBody>
         <StyledButtonContainer>
-          {/* <Button variant="red" pattern="text" onClick={closeModal}>
-            취소
-          </Button> */}
-          {/* <Button role="cancel" text="취소" onClick={closeModal} />
-          <Button role="delete" text="삭제" onClick={onConfirmClick} /> */}
+          <Button variant="gray" pattern="text" onClick={closeModal}>
+            <span className="cancel">취소</span>
+          </Button>
+          <Button variant="red" pattern="text" onClick={onConfirmClick}>
+            <span className="confirm">삭제</span>
+          </Button>
         </StyledButtonContainer>
       </StyledModal>
     </StyledModalContainer>
@@ -30,26 +31,34 @@ export default function ConfirmModal({
 }
 
 const StyledModalContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: fixed;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
 `;
 
 const StyledBackdrop = styled.div`
-  position: fixed;
-  left: 0;
+  position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  background-color: ${(props) => props.theme.colors.grey900};
+  opacity: 0.3;
 `;
 
 const StyledModal = styled.div`
+  position: relative;
   z-index: 1;
   min-width: 320px;
   padding: 24px;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   background-color: ${(props) => props.theme.colorSystem.surfaceDefault};
   box-shadow: ${(props) => props.theme.objectStyles.dropShadow.up};
@@ -61,6 +70,18 @@ const StyledModalBody = styled.div`
 
 const StyledButtonContainer = styled.div`
   display: flex;
-  flex-direction: column;
   gap: 8px;
+
+  .confirm,
+  .cancel {
+    font: ${(props) => props.theme.font.displayBold14};
+  }
+
+  .confirm {
+    color: ${(props) => props.theme.colorSystem.textWhiteDefault};
+  }
+
+  .cancel {
+    color: ${(props) => props.theme.colorSystem.textDefault};
+  }
 `;

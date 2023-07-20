@@ -60,12 +60,24 @@ export default function Main({}: Props) {
 
   const fetchColumns = async () => {
     try {
-      const response = await fetch('/api/columns');
+      const options = {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+          'Content-Type': 'application/json',
+        },
+      };
+      const response = await fetch(
+        import.meta.env.VITE_APP_BASE_URL + '/api/columns',
+        options
+      );
+
       if (!response.ok) {
         throw new Error('Failed to fetch columns');
       }
+
       const columns = await response.json();
-      setColumns(columns.data);
+
+      setColumns(columns.message);
     } catch (error) {
       console.error('Error fetching columns:', error);
     }

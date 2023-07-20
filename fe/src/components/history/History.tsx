@@ -6,36 +6,70 @@ import ConfirmModal from '../ConfirmModal';
 import ClosedIcon from '../ClosedIcon';
 
 interface Props {
-  onClose: () => void;
+  unmountHistory: () => void;
 }
 
 type Toggle = 'close' | 'open';
 
-export default function History({ onClose }: Props) {
+export default function History({ unmountHistory }: Props) {
   const [histories, setHistories] = useState<History>();
   const [toggleAnimation, setToggleAnimation] = useState<Toggle>('close');
   const [isOpenDeleteAllModal, setIsOpenDeleteAllModal] = useState(false);
+  const accessToken = localStorage.getItem('accessToken');
 
   const fetchHistory = async () => {
     const historyId = histories?.histories[histories.histories.length - 1]?.id;
-    const count = 5;
-    const url = historyId
+    const count = 10;
+    const path = historyId
       ? `api/histories?historyId=${historyId}&count=${count}`
-      : 'api/histories';
-    const response = await fetch(url);
+      : `api/histories`;
+    const url = new URL(path, import.meta.env.VITE_APP_BASE_URL);
+    const options = {
+      headers: {
+        authorization: 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch history');
+    }
+
     const data = await response.json();
 
-    setHistories(data.message);
+    return data;
+  };
+
+  const fetchAndSetHistories = async () => {
+    try {
+      const history = await fetchHistory();
+
+      if (histories) {
+        setHistories({ ...histories, ...history.message });
+
+        return;
+      }
+
+      setHistories(history.message);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
-    fetchHistory();
+    fetchAndSetHistories();
     setToggleAnimation('open');
   }, []);
 
-  const onCloseHistory = () => {
+  const onTransitionEnd = () => {
+    if (toggleAnimation === 'close') {
+      unmountHistory();
+    }
+  };
+
+  const onCloseButtonClick = () => {
     setToggleAnimation('close');
-    document.addEventListener('transitionend', onClose, { once: true });
   };
 
   const fetchMoreHistories = () => {
@@ -43,21 +77,28 @@ export default function History({ onClose }: Props) {
       return;
     }
 
-    fetchHistory();
+    fetchAndSetHistories();
   };
 
-  const onDeleteAll = () => {};
+  const onDeleteAll = () => {
+    setHistories(undefined);
+    setIsOpenDeleteAllModal(false);
+  };
 
   return (
-    <StyledHistory openanimation={toggleAnimation}>
+    <StyledHistory
+      className="history"
+      openanimation={toggleAnimation}
+      onTransitionEnd={onTransitionEnd}
+    >
       <StyledHistoryTitleArea>
         <div className="title">사용자 활동 기록</div>
-        <Button pattern="icon" onClick={onCloseHistory}>
+        <Button pattern="icon" onClick={onCloseButtonClick}>
           <ClosedIcon width="16px" />
           <StyledButtonText>닫기</StyledButtonText>
         </Button>
       </StyledHistoryTitleArea>
-      {histories ? (
+      {histories && histories.histories.length > 0 ? (
         <HistoryList
           histories={histories.histories}
           onEndReach={fetchMoreHistories}
@@ -65,9 +106,11 @@ export default function History({ onClose }: Props) {
       ) : (
         <StyledNoHistory>사용자 활동 기록이 없습니다.</StyledNoHistory>
       )}
-      {histories?.length !== 0 && (
+      {histories?.histories && (
         <StyledButtonContainer>
-          <Button onClick={() => setIsOpenDeleteAllModal(true)} />
+          <Button pattern="text" onClick={() => setIsOpenDeleteAllModal(true)}>
+            <span>기록 전체 삭제</span>
+          </Button>
         </StyledButtonContainer>
       )}
       {isOpenDeleteAllModal && (
@@ -92,9 +135,10 @@ const StyledHistory = styled.div<HistoryProps>`
   border-radius: ${(props) => props.theme.objectStyles.radius.m};
   box-shadow: ${(props) => props.theme.objectStyles.dropShadow.floating};
   position: absolute;
-  top: 20px;
-  right: ${(props) => (props.openanimation === 'open' ? '0px' : '-370px')};
-  transition: all 1s;
+  top: 40px;
+  right: ${(props) => (props.openanimation === 'open' ? '-20px' : '-450px')};
+  transition: right 1s;
+  background-color: ${(props) => props.theme.colorSystem.surfaceDefault};
 `;
 
 const StyledHistoryTitleArea = styled.div`
@@ -124,6 +168,11 @@ const StyledButtonContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 4px;
+
+  span {
+    font: ${(props) => props.theme.font.displayBold14};
+    color: ${(props) => props.theme.colorSystem.surfaceDanger};
+  }
 `;
 
 const StyledButtonText = styled.div`

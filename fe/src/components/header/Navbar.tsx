@@ -12,24 +12,22 @@ interface Props {
 export default function Navbar({ isLogin }: Props) {
   const [isOpenHistory, setIsOpenHistory] = useState(false);
 
-  const onOpenHistory = () => setIsOpenHistory(true);
-  const onCloseHistory = () => setIsOpenHistory(false);
+  const mountHistory = () => setIsOpenHistory(true);
+  const unmountHistory = () => setIsOpenHistory(false);
 
   return (
     <StyledNavbar>
-      {
-        <StyledButton>
-          {isLogin ? (
-            <Link to={'/login'}>로그아웃</Link>
-          ) : (
-            <Link to={'/login'}>로그인</Link>
-          )}
-        </StyledButton>
-      }
-      <Button pattern="icon" iconHoverColor="blue" onClick={onOpenHistory}>
+      <StyledButton>
+        {isLogin ? (
+          <Link to={'/login'}>로그아웃</Link>
+        ) : (
+          <Link to={'/login'}>로그인</Link>
+        )}
+      </StyledButton>
+      <Button pattern="icon" iconHoverColor="blue" onClick={mountHistory}>
         <HistoryIcon />
       </Button>
-      {isOpenHistory && <History onClose={onCloseHistory} />}
+      {isOpenHistory && <History unmountHistory={unmountHistory} />}
     </StyledNavbar>
   );
 }
@@ -37,13 +35,13 @@ export default function Navbar({ isLogin }: Props) {
 const StyledNavbar = styled.div`
   display: flex;
   gap: 24px;
+  position: relative;
 `;
 
 const StyledButton = styled.button`
   display: flex;
   align-items: center;
   cursor: pointer;
-  position: relative;
 
   a {
     font: ${(props) => props.theme.font.displayBold16};
