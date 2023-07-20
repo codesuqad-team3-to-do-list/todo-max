@@ -18,10 +18,9 @@ public class HistoryService {
         historyRepository.save(history);
     }
 
-//    @Transactional(readOnly = true)  // TODO: tansactional이랑 @schediled 어노테이션 같이 쓰면 오류 발생함
     public List<History> findHistories(Long memberId, Long historyId, int count) {
         if (historyId == 0L) {
-            historyId = historyRepository.findLatestHistoryId(memberId);
+            historyId = historyRepository.findLatestHistoryId(memberId) + 1;
         }
         return historyRepository.findHistories(memberId, historyId, count);
     }
