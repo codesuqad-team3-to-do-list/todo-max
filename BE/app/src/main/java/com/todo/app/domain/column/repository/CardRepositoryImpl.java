@@ -1,10 +1,12 @@
 package com.todo.app.domain.column.repository;
 
+import com.todo.app.common.exception.ResourceNotFoundException;
 import com.todo.app.domain.column.domain.Card;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -57,10 +59,15 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
-    public void update(Card card) {
+    public Card update(Card card) {
         String sql = "UPDATE tdl_card SET title = :title, content = :content WHERE id = :id";
 
-        template.update(sql, mappingUdateCardSqlParameterSource(card));
+        try {
+            template.update(sql, mappingUdateCardSqlParameterSource(card));
+            return card;
+        } catch (DataAccessException e) {
+            throw new ResourceNotFoundException("Card", card.getId());
+        }
     }
 
     @Override

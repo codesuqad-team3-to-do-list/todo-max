@@ -41,12 +41,12 @@ public class CardController {
     }
 
     @PatchMapping("/api/cards/{cardId}")
-    public ApiResponse<Void> updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequest updateRequest,
+    public ApiResponse<CardResponse> updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequest updateRequest,
                                         HttpServletRequest request) {
-        cardService.update(updateRequest.toCardUpdate());
+        Card card = cardService.update(updateRequest.toCardUpdate());
         historyService.save(updateRequest.toHistory(Long.valueOf(String.valueOf(request.getAttribute("memberId")))));
 
-        return ApiResponse.success(HttpStatus.OK);
+        return ApiResponse.success(HttpStatus.OK, CardResponse.from(card));
     }
 
     @PatchMapping("/api/columns/{columnId}/cards/{cardId}")

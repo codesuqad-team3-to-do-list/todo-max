@@ -12,7 +12,7 @@ public interface CardRepository {
 
     Card save(Card card);
 
-    void update(Card card);
+    Card update(Card card);
 
     void delete(Long cardId);
 
