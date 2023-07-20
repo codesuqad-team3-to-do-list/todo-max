@@ -17,80 +17,47 @@ export default function Main({}: Props) {
   const isMousePressed = useRef<boolean>(false);
 
   useEffect(() => {
-    fetchColumns();
+    (async () => {
+      const columns = await fetchColumns();
+      setColumns(columns.message);
+    })();
   }, []);
 
   const fetchColumns = async () => {
-    try {
-      const response = await fetch(`/api/columns`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch columns');
-      }
-      const columns = await response.json();
-      setColumns(columns.data);
-    } catch (error) {
-      console.error('Error fetching columns:', error);
+    const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+    const options = {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-Type': 'application/json',
+      },
+    };
+    const url = new URL(`/api/columns`, baseUrl);
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch columns');
     }
+
+    const data = await response.json();
+
+    return data;
   };
 
-  const onCardAdd = (columnId: number) => {
+  const onAddCard = (addedCardInfo: Card, columnId: number) => {
     if (!columns) {
       return;
     }
 
-    setColumns((prevColumns) => {
-      if (!prevColumns) {
-        return;
-      }
+    const updatedColumns = columns.map((column) =>
+      column.columnId === columnId
+        ? { ...column, cards: [addedCardInfo, ...column.cards] }
+        : { ...column }
+    );
 
-      const newCard = {
-        id: Date.now(),
-        title: '',
-        content: '',
-      };
-
-      return prevColumns.map((column) => {
-        if (column.columnId === columnId) {
-          return {
-            ...column,
-            cards: [newCard, ...column.cards],
-          };
-        }
-
-        return column;
-      });
-    });
+    setColumns(updatedColumns);
   };
 
-  const onCardRegister = (updatedCard: Card) => {
-    if (!columns) {
-      return;
-    }
-
-    setColumns((prevColumns) => {
-      if (!prevColumns) {
-        return;
-      }
-
-      return prevColumns.map((column) => {
-        if (!updatedCard.id) {
-          return {
-            ...column,
-            cards: [updatedCard, ...column.cards],
-          };
-        }
-
-        return {
-          ...column,
-          cards: column.cards.map((card) =>
-            card.id === updatedCard.id ? updatedCard : card
-          ),
-        };
-      });
-    });
-  };
-
-  const onCardRemove = (cardId: number | undefined) => {
+  const onRemoveCard = (cardId: number | undefined) => {
     if (!columns) {
       return;
     }
@@ -105,6 +72,21 @@ export default function Main({}: Props) {
         cards: column.cards.filter((card) => card.id !== cardId),
       }));
     });
+  };
+
+  const onEditCard = (editedCardInfo: Card) => {
+    if (!columns) {
+      return;
+    }
+
+    const updatedColumns = columns.map((column) => ({
+      ...column,
+      cards: column.cards.map((card) =>
+        card.id === editedCardInfo.id ? { ...card, ...editedCardInfo } : card
+      ),
+    }));
+
+    setColumns(updatedColumns);
   };
 
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -148,22 +130,17 @@ export default function Main({}: Props) {
     }
   };
 
-  const onColumnTitleRename = () => {};
-  const onColumnRemove = () => {};
-
   return (
     <StyledMain onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
       {columns &&
         columns.map((column) => (
           <Column
             key={column.columnId}
-            onColumnTitleRename={onColumnTitleRename}
-            onColumnRemove={onColumnRemove}
             onMouseDown={onMouseDown}
             column={column}
-            onCardRegister={onCardRegister}
-            onCardRemove={onCardRemove}
-            onCardAdd={onCardAdd}
+            onRemoveCard={onRemoveCard}
+            onAddCard={onAddCard}
+            onEditCard={onEditCard}
           />
         ))}
 
@@ -174,8 +151,7 @@ export default function Main({}: Props) {
           content={dragData.current.content}
           drag={'true'}
           position={mousePosition}
-          onCardRegister={onCardRegister}
-          onCardRemove={onCardRemove}
+          onRemoveCard={onRemoveCard}
         />
       )}
     </StyledMain>

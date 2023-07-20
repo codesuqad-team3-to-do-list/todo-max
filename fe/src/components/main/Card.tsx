@@ -3,53 +3,137 @@ import Button from '../Button';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import EditIcon from '../EditIcon';
 import ClosedIcon from '../ClosedIcon';
-
-type Type = 'default' | 'add' | 'edit' | 'drag' | 'place';
+import CardContent from './CardContent';
 
 type Props = {
   cardId?: number;
+  cardType?: CardType;
   columnId?: number;
   title?: string;
   content?: string;
   onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
   drag?: 'true' | 'false';
   position?: Position;
-  onCardRegister: (updatedCard: Card) => void;
-  onCardRemove: (cardId: number | undefined) => void;
+  onRemoveCard?: (cardId: number) => void;
+  removeAddCard?: () => void;
+  onAddCard?: (addedCardInfo: Card, columnId: number) => void;
+  onEditCard?: (editedCardInfo: Card) => void;
 };
+
 export default function Card({
   cardId,
+  cardType = 'default',
   columnId,
   title,
   content,
   onMouseDown,
   drag,
   position,
-  onCardRegister,
-  onCardRemove,
+  onRemoveCard,
+  removeAddCard,
+  onAddCard,
+  onEditCard,
 }: Props) {
-  const [type, setType] = useState<Type>(() =>
-    title || content ? 'default' : 'add'
-  );
+  const [type, setType] = useState<CardType>(cardType);
   const [titleInput, setTitleInput] = useState('');
   const [bodyTextArea, setBodyTextArea] = useState('');
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  const isNotEdited = titleInput === title && bodyTextArea === content;
+  const isEmpty = !titleInput || !bodyTextArea;
+  const buttonInactive = isNotEdited || isEmpty;
 
   useEffect(() => {
-    if (!textareaRef.current) return;
+    if (!textAreaRef.current) return;
 
-    textareaRef.current.style.height = '0px';
+    textAreaRef.current.style.height = '0px';
 
-    const scrollHeight = textareaRef.current.scrollHeight;
-    const style = window.getComputedStyle(textareaRef.current);
+    const scrollHeight = textAreaRef.current.scrollHeight;
+    const style = window.getComputedStyle(textAreaRef.current);
     const borderTop = parseInt(style.borderTop);
     const borderBottom = parseInt(style.borderBottom);
 
-    textareaRef.current.style.height = `${
+    textAreaRef.current.style.height = `${
       scrollHeight + borderTop + borderBottom
     }px`;
   }, [bodyTextArea]);
+
+  const changeTitleInput = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitleInput(event.target.value);
+  };
+
+  const changeContentInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setBodyTextArea(event.target.value);
+  };
+
+  const requestAddCard = async () => {
+    const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: titleInput,
+        content: bodyTextArea,
+      }),
+    };
+    const url = new URL(`/api/columns/${columnId}/cards`, baseUrl);
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error('추가 요청이 실패했습니다.');
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  const requestRemoveCard = async () => {
+    const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+    const options = {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-Type': 'application/json',
+      },
+    };
+    const url = new URL(`/api/columns/${columnId}/cards/${cardId}`, baseUrl);
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error('삭제 요청이 실패했습니다.');
+    }
+  };
+
+  const requestEditCard = async () => {
+    const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+    const options = {
+      method: 'PATCH',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: cardId,
+        title: titleInput,
+        content: bodyTextArea,
+      }),
+    };
+    const url = new URL(`/api/cards/${cardId}`, baseUrl);
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error('수정 요청이 실패했습니다.');
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
 
   const onCardEdit = () => {
     setType('edit');
@@ -62,25 +146,46 @@ export default function Card({
     setBodyTextArea(content);
   };
 
-  const onCardRegisterClose = () => {
-    if (type === 'add') {
-      onCardRemove(cardId);
+  const onCardRemoveClick = async () => {
+    try {
+      await requestRemoveCard();
+
+      if (onRemoveCard && cardId) {
+        onRemoveCard(cardId);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onConfirmButtonClick = async () => {
+    try {
+      if (type === 'add' && removeAddCard && onAddCard) {
+        const addedCardInfo = await requestAddCard();
+        removeAddCard();
+        onAddCard(addedCardInfo.message, columnId!);
+        return;
+      }
+
+      if (type === 'edit' && onEditCard) {
+        const { message } = await requestEditCard();
+        onEditCard(message);
+        setType('default');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onCancelButtonClick = () => {
+    if (type === 'add' && removeAddCard) {
+      removeAddCard();
+      return;
     }
 
-    setType('default');
-  };
-
-  const onCardRegisterConfirm = () => {
-    setType('default');
-    onCardRegister(updatedCard);
-  };
-
-  const isNotEdit = titleInput === title && bodyTextArea === content;
-
-  const updatedCard = {
-    id: cardId,
-    title: titleInput,
-    content: bodyTextArea,
+    if (type === 'edit') {
+      setType('default');
+    }
   };
 
   return (
@@ -94,50 +199,18 @@ export default function Card({
     >
       <StyledCardContainer>
         <StyledTextArea>
-          <StyledContent>
-            {type === 'add' ? (
-              <>
-                <StyledTitleInput
-                  value={titleInput}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setTitleInput(event.target.value)
-                  }
-                  placeholder="제목을 입력하세요"
-                />
-                <StyledBodyTextarea
-                  value={bodyTextArea}
-                  onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                    setBodyTextArea(event.target.value)
-                  }
-                  placeholder="내용을 입력하세요"
-                  ref={textareaRef}
-                />
-              </>
-            ) : type === 'edit' ? (
-              <>
-                <StyledTitleInput
-                  value={titleInput}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setTitleInput(event.target.value)
-                  }
-                  placeholder="제목을 입력하세요"
-                />
-                <StyledBodyTextarea
-                  value={bodyTextArea}
-                  onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                    setBodyTextArea(event.target.value)
-                  }
-                  placeholder="내용을 입력하세요"
-                  ref={textareaRef}
-                />
-              </>
-            ) : (
-              <>
-                <StyledTitle>{title}</StyledTitle>
-                <StyledBody>{content}</StyledBody>
-              </>
-            )}
-          </StyledContent>
+          <CardContent
+            {...{
+              type,
+              titleInput,
+              changeTitleInput,
+              bodyTextArea,
+              changeContentInput,
+              textAreaRef,
+              title,
+              content,
+            }}
+          />
           {(type === 'default' || type === 'drag' || type === 'place') && (
             <StyledCaption>author by web</StyledCaption>
           )}
@@ -146,15 +219,15 @@ export default function Card({
               <Button
                 variant="gray"
                 pattern="text"
-                onClick={onCardRegisterClose}
+                onClick={onCancelButtonClick}
               >
                 <span>취소</span>
               </Button>
               <Button
                 variant="blue"
                 pattern="text"
-                disabled={isNotEdit}
-                onClick={onCardRegisterConfirm}
+                disabled={buttonInactive}
+                onClick={onConfirmButtonClick}
               >
                 <span>등록</span>
               </Button>
@@ -169,7 +242,7 @@ export default function Card({
             <Button
               pattern="icon"
               iconHoverColor="red"
-              onClick={() => onCardRemove(cardId)}
+              onClick={onCardRemoveClick}
             >
               <ClosedIcon />
             </Button>
@@ -181,7 +254,7 @@ export default function Card({
 }
 
 interface CardProps {
-  type: Type;
+  type: CardType;
   drag?: 'true' | 'false';
   position?: Position;
 }
@@ -219,33 +292,6 @@ const StyledTextArea = styled.div`
 const StyledIconArea = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const StyledContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const StyledTitle = styled.div`
-  font: ${(props) => props.theme.font.displayBold14};
-  color: ${(props) => props.theme.colorSystem.textStrong};
-`;
-
-const StyledBody = styled.div`
-  font: ${(props) => props.theme.font.displayMD14};
-  color: ${(props) => props.theme.colorSystem.textDefault};
-`;
-
-const StyledTitleInput = styled.input`
-  font: ${(props) => props.theme.font.displayBold14};
-  color: ${(props) => props.theme.colorSystem.textStrong};
-`;
-
-const StyledBodyTextarea = styled.textarea`
-  font: ${(props) => props.theme.font.displayMD14};
-  color: ${(props) => props.theme.colorSystem.textDefault};
-  overflow: hidden;
 `;
 
 const StyledCaption = styled.div`

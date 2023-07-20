@@ -17,3 +17,5 @@ interface Card {
 }
 
 type Position = { x: number; y: number };
+
+type CardType = 'default' | 'add' | 'edit' | 'drag' | 'place';
