@@ -2,7 +2,6 @@ package com.todo.app.domain.column.service;
 
 import com.todo.app.domain.column.domain.Card;
 import com.todo.app.domain.column.repository.CardRepository;
-import com.todo.app.domain.history.service.HistoryService;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +12,9 @@ public class CardServiceImpl implements CardService {
     private static final Long WEIGHT_VALUE_INTERVAL = 1000L;
 
     private final CardRepository cardRepository;
-    private final HistoryService historyService;
 
-    public CardServiceImpl(CardRepository cardRepository, HistoryService historyService) {
+    public CardServiceImpl(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
-        this.historyService = historyService;
     }
 
     @Override
