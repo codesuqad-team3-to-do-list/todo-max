@@ -47,7 +47,7 @@ public class CardMoveRequest {
     }
 
     public boolean isMovedColumn(Long fromColumnId) {
-        return Objects.equals(fromColumnId, toColumnId);
+        return !Objects.equals(fromColumnId, toColumnId);
     }
 
     public History toHistory(Long memberId) {

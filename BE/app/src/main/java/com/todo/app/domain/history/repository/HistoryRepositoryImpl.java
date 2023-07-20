@@ -18,7 +18,17 @@ public class HistoryRepositoryImpl implements HistoryRepository {
         this.template = template;
     }
 
-     public void save(History history) {
+    @Override
+    public Long findLatestHistoryId(Long memberId) {
+        String sql = "SELECT MAX(id) "
+                + "FROM history "
+                + "WHERE member_id = :memberId "
+                + "AND deleted = 0";
+
+        return template.queryForObject(sql, Map.of("memberId", memberId), Long.class);
+    }
+
+    public void save(History history) {
         String sql = "INSERT INTO history (member_id, action, tdl_card_title, tdl_column_previous_title, tdl_column_current_title, action_datetime) "
                 + "VALUE (:memberId, :action, :cardTitle, :prevColumnTitle, :currentColumnTitle, :actionDatetime)";
 
@@ -50,6 +60,16 @@ public class HistoryRepositoryImpl implements HistoryRepository {
         String sql = "UPDATE history SET deleted = 1 WHERE member_id = :memberId";
 
         template.update(sql, Map.of("memberId", memberId));
+    }
+
+    private SqlParameterSource historySqlParameterSource(History history) {
+        return new MapSqlParameterSource()
+                .addValue("memberId", history.getMemberId())
+                .addValue("action", history.getAction())
+                .addValue("cardTitle", history.getCardTitle())
+                .addValue("prevColumnTitle", history.getPrevColumnTitle())
+                .addValue("currentColumnTitle", history.getCurrentColumnTitle())
+                .addValue("actionDatetime", history.getActionDatetime());
     }
 
     private RowMapper<History> historyRowMapper() {
