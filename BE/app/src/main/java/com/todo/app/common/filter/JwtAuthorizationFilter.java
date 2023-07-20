@@ -21,7 +21,7 @@ import org.springframework.util.PatternMatchUtils;
 
 public class JwtAuthorizationFilter implements Filter {
 
-    private final String[] whiteListUris = new String[]{"/api/login", "/api/signup", "/api/auth/refresh-access-token"}; // TODO: 회원가입 등 인가에서 제외할 URI 등록하기
+    private final String[] whiteListUris = new String[]{"/api/login", "/api/signup", "/api/auth/reissue-access-token"}; // TODO: 회원가입 등 인가에서 제외할 URI 등록하기
     private final JwtProvider jwtProvider = new JwtProvider();
     private final ObjectMapper objectMapper;
 

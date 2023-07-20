@@ -47,7 +47,7 @@ public class JwtService {
     }
 
     @Transactional
-    public Jwt renewAccessToken(String refreshToken) {
+    public Jwt reissueAccessToken(String refreshToken) {
         jwtProvider.getClaims(refreshToken);
         Member member = jwtRepository.findByRefreshToken(refreshToken);
         if(member == null) {
