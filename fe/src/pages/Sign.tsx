@@ -13,7 +13,6 @@ interface Props {
 export default function Sign({ type }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [checkPassword, setCheckPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSetEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +29,6 @@ export default function Sign({ type }: Props) {
 
   const isEmailValid = validateInputValue(email, regex.email);
   const isPasswordValid = validateInputValue(password, regex.password);
-  const isButtonActive = isEmailValid && isPasswordValid;
   const isEmptyEmail = email.length === 0;
   const isEmptyPassword = password.length === 0;
 
@@ -74,10 +72,7 @@ export default function Sign({ type }: Props) {
           : ''}
       </StyledValidInfo>
 
-      <StyledButton type="login">
-        {/* <StyledButton type="login" disabled={!isButtonActive}> */}
-        로그인
-      </StyledButton>
+      <StyledButton type="login">로그인</StyledButton>
 
       <StyledSignUpLink to={'/sign-up'}>
         <StyledButton type="signUp">회원가입</StyledButton>
@@ -121,7 +116,7 @@ const storeTokenInLocalStorage = (tokens: {
   refreshToken: string;
 }) => {
   Object.entries(tokens).forEach(([key, value]) => {
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(key, value);
   });
 };
 
