@@ -117,7 +117,8 @@ public class CardRepositoryImpl implements CardRepository {
         String sql = "SELECT id, tdl_column_id, title, content, author, weight_value "
                 + "FROM tdl_card card "
                 + "WHERE card.tdl_column_id = :columnId "
-                + "AND deleted = 0";
+                + "AND deleted = 0 "
+                + "ORDER BY weight_value ";
 
         return template.query(sql, Map.of("columnId", columnId), cardRowMapper());
     }
