@@ -23,24 +23,6 @@ public class GlobalExceptionHandler {
         return ApiResponse.exception(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ApiResponse<String> handleException(ResourceNotFoundException ex, HttpServletResponse response) {
-        response.setStatus(ex.getHttpStatus().value());
-        return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
-    }
-
-    @ExceptionHandler(IllegalPasswordException.class)
-    public ApiResponse<String> handleException(IllegalPasswordException ex, HttpServletResponse response) {
-        response.setStatus(ex.getHttpStatus().value());
-        return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
-    }
-
-    @ExceptionHandler(IllegalJwtTokenException.class)
-    public ApiResponse<String> handleException(IllegalJwtTokenException ex, HttpServletResponse response) {
-        response.setStatus(ex.getHttpStatus().value());
-        return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
-    }
-
     @ExceptionHandler(JwtException.class)
     public ApiResponse<JwtExceptionResponse> handleException(JwtException ex, HttpServletResponse response) {
         JwtExceptionType jwtExceptionType = JwtExceptionType.from(ex);
@@ -48,8 +30,8 @@ public class GlobalExceptionHandler {
         return ApiResponse.exception(jwtExceptionType.getHttpStatus(), new JwtExceptionResponse(jwtExceptionType));
     }
 
-    @ExceptionHandler(MemberDuplicationException.class)
-    public ApiResponse<String> handleException(MemberDuplicationException ex, HttpServletResponse response) {
+    @ExceptionHandler(CustomBusinessException.class)
+    public ApiResponse<String> handleException(CustomBusinessException ex, HttpServletResponse response) {
         response.setStatus(ex.getHttpStatus().value());
         return ApiResponse.exception(ex.getHttpStatus(), ex.getMessage());
     }
