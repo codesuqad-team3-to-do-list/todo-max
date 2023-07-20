@@ -15,13 +15,13 @@ public class Card {
         this.columnId = columnId;
         this.title = title;
         this.content = content;
-        this.author = (author.isEmpty())? "Web" : author;
+        this.author = (author == null)? "Web" : author;
         this.weightValue = weightValue;
         this.deleted = deleted;
     }
 
     public Card(Long id, Long columnId, String title, String content, String author) {
-        this(id, columnId, title, content, author, 0L, false);
+        this(id, columnId, title, content, (author == null)? "Web" : author, 0L, false);
     }
 
     public Card(Long id, Long columnId) {

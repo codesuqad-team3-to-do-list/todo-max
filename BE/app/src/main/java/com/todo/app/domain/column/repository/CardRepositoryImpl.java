@@ -48,7 +48,7 @@ public class CardRepositoryImpl implements CardRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(sql, mappingCreateCardSqlParameterSource(card), keyHolder);
 
-        return new Card(keyHolder.getKey().longValue(), card.getColumnId(), card.getTitle(), card.getContent(), card.getAuthor());
+        return new Card(keyHolder.getKey().longValue(), card.getColumnId(), card.getTitle(), card.getContent(), (card.getAuthor() == null)? "Web" : card.getAuthor());
     }
 
     @Override
