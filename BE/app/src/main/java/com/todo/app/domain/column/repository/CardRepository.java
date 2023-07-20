@@ -20,7 +20,7 @@ public interface CardRepository {
 
     Optional<String> findTitleBy(Long cardId);
 
-    Optional<Long> findLastCardWeightValue(Long columnId);
+    Optional<Long> findFirstCardWeightValue(Long columnId);
 
     List<Card> findCardsBy(Long columId);
 
