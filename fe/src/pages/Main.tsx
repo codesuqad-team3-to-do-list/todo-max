@@ -14,11 +14,84 @@ export default function Main({}: Props) {
   const dragData = useRef<Card>();
   const dragElement = useRef<Element>();
   const startPosition = useRef<Position>();
+  const isMousePressed = useRef<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      const columns = await fetchColumns();
+      setColumns(columns.message);
+    })();
+  }, []);
+
+  const fetchColumns = async () => {
+    const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+    const options = {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-Type': 'application/json',
+      },
+    };
+    const url = new URL(`/api/columns`, baseUrl);
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch columns');
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  const onAddCard = (addedCardInfo: Card, columnId: number) => {
+    if (!columns) {
+      return;
+    }
+
+    const updatedColumns = columns.map((column) =>
+      column.columnId === columnId
+        ? { ...column, cards: [addedCardInfo, ...column.cards] }
+        : { ...column }
+    );
+
+    setColumns(updatedColumns);
+  };
+
+  const onRemoveCard = (cardId: number | undefined) => {
+    if (!columns) {
+      return;
+    }
+
+    setColumns((prevColumns) => {
+      if (!prevColumns) {
+        return prevColumns;
+      }
+
+      return prevColumns.map((column) => ({
+        ...column,
+        cards: column.cards.filter((card) => card.id !== cardId),
+      }));
+    });
+  };
+
+  const onEditCard = (editedCardInfo: Card) => {
+    if (!columns) {
+      return;
+    }
+
+    const updatedColumns = columns.map((column) => ({
+      ...column,
+      cards: column.cards.map((card) =>
+        card.id === editedCardInfo.id ? { ...card, ...editedCardInfo } : card
+      ),
+    }));
+
+    setColumns(updatedColumns);
+  };
 
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-
-    const target = e.target;
+    isMousePressed.current = true;
+    const target = e.currentTarget;
 
     if (target instanceof HTMLElement) {
       const targetElement = target.closest('.card');
@@ -35,14 +108,17 @@ export default function Main({}: Props) {
     }
   };
 
-  const onMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseUp = () => {
+    isMousePressed.current = false;
     setIsDragging(false);
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging) {
+    if (!isMousePressed.current) {
       return;
     }
+
+    setIsDragging(true);
 
     if (dragElement.current && startPosition.current) {
       const dragElem = dragElement.current.getBoundingClientRect();
@@ -54,48 +130,17 @@ export default function Main({}: Props) {
     }
   };
 
-  useEffect(() => {
-    fetchColumns();
-  }, []);
-
-  const fetchColumns = async () => {
-    try {
-      const options = {
-        headers: {
-          authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-          'Content-Type': 'application/json',
-        },
-      };
-      const response = await fetch(
-        import.meta.env.VITE_APP_BASE_URL + '/api/columns',
-        options
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch columns');
-      }
-
-      const columns = await response.json();
-
-      setColumns(columns.message);
-    } catch (error) {
-      console.error('Error fetching columns:', error);
-    }
-  };
-
-  const onColumnTitleRename = () => {};
-  const onColumnRemove = () => {};
-
   return (
     <StyledMain onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
       {columns &&
         columns.map((column) => (
           <Column
             key={column.columnId}
-            onColumnTitleRename={onColumnTitleRename}
-            onColumnRemove={onColumnRemove}
             onMouseDown={onMouseDown}
             column={column}
+            onRemoveCard={onRemoveCard}
+            onAddCard={onAddCard}
+            onEditCard={onEditCard}
           />
         ))}
 
@@ -106,6 +151,7 @@ export default function Main({}: Props) {
           content={dragData.current.content}
           drag={'true'}
           position={mousePosition}
+          onRemoveCard={onRemoveCard}
         />
       )}
     </StyledMain>

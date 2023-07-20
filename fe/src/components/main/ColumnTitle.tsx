@@ -7,11 +7,14 @@ import PlusIcon from '../PlusIcon';
 interface Props {
   cardCount: number;
   title: string;
-  onColumnTitleRename: () => void;
-  onColumnRemove: () => void;
+  renderAddCard: () => void;
 }
 
-export default function ColumnTitle({ cardCount, title }: Props) {
+export default function ColumnTitle({
+  cardCount,
+  title,
+  renderAddCard,
+}: Props) {
   return (
     <StyledColumnTitle>
       <div className="text-area">
@@ -19,7 +22,7 @@ export default function ColumnTitle({ cardCount, title }: Props) {
         <Badge count={cardCount} />
       </div>
       <div className="icon-area">
-        <Button pattern="icon" iconHoverColor="blue">
+        <Button pattern="icon" iconHoverColor="blue" onClick={renderAddCard}>
           <PlusIcon />
         </Button>
         <Button pattern="icon" iconHoverColor="red">

@@ -11,7 +11,7 @@ interface Column {
 }
 
 interface Card {
-  id: number;
+  id?: number;
   title: string;
   content: string;
 }
@@ -30,3 +30,5 @@ interface HistoryItem {
   actionDatetime: string;
 }
 type Position = { x: number; y: number };
+
+type CardType = 'default' | 'add' | 'edit' | 'drag' | 'place';
