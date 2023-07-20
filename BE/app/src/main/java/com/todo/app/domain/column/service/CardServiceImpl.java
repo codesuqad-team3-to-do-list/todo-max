@@ -22,10 +22,15 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card create(Card card) {
-        Long previousWeightValue = cardRepository.findLastCardWeightValue(card.getColumnId())
+        Long previousWeightValue = cardRepository.findFirstCardWeightValue(card.getColumnId())
                 .orElseGet(() -> 0L);
 
-        card.assignWeightValue(previousWeightValue + WEIGHT_VALUE_INTERVAL);
+        if (previousWeightValue <= 1L) {
+            resizeAllWeightValues(card.getColumnId());
+            previousWeightValue = 1000L;
+        }
+
+        card.assignWeightValueAverage(0L, previousWeightValue);
 
         return cardRepository.save(card);
     }

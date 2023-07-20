@@ -26,11 +26,11 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
-    public Optional<Long> findLastCardWeightValue(Long columnId) {
+    public Optional<Long> findFirstCardWeightValue(Long columnId) {
         String sql = "SELECT weight_value "
                 + "FROM tdl_card "
                 + "WHERE tdl_column_id = :columnId AND deleted = 0 "
-                + "ORDER BY weight_value DESC "
+                + "ORDER BY weight_value "
                 + "LIMIT 1";
 
         try (Stream<Long> result = template.queryForStream(sql, Map.of("columnId", columnId),
@@ -124,7 +124,8 @@ public class CardRepositoryImpl implements CardRepository {
         String sql = "SELECT id, tdl_column_id, title, content, author, weight_value "
                 + "FROM tdl_card card "
                 + "WHERE card.tdl_column_id = :columnId "
-                + "AND deleted = 0";
+                + "AND deleted = 0 "
+                + "ORDER BY weight_value ";
 
         return template.query(sql, Map.of("columnId", columnId), cardRowMapper());
     }
