@@ -6,7 +6,7 @@ public interface CardService {
 
     Card create(Card card);
 
-    void update(Card card);
+    Card update(Card card);
 
     String delete(Long cardId);
 

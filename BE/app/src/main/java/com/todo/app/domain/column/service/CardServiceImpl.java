@@ -31,10 +31,9 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void update(Card card) {
-        cardRepository.update(card);
+    public Card update(Card card) {
+        return cardRepository.update(card);
     }
-
 
     @Override
     public void move(final Card card, final Long previousCardId, final Long nextCardId) {

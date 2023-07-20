@@ -15,7 +15,7 @@ public class Card {
         this.columnId = columnId;
         this.title = title;
         this.content = content;
-        this.author = author;
+        this.author = (author.isEmpty())? "Web" : author;
         this.weightValue = weightValue;
         this.deleted = deleted;
     }
@@ -82,6 +82,7 @@ public class Card {
         card.id = id;
         card.title = title;
         card.content = content;
+        card.author = "Web";
 
         return card;
     }
