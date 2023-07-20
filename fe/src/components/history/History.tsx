@@ -46,12 +46,12 @@ export default function History({ unmountHistory }: Props) {
       const history = await fetchHistory();
 
       if (histories) {
-        setHistories({ ...histories, ...history.message });
+        setHistories({ ...histories, ...history.data });
 
         return;
       }
 
-      setHistories(history.message);
+      setHistories(history.data);
     } catch (error) {
       console.error(error);
     }

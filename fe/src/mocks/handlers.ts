@@ -136,7 +136,7 @@ const successGetColumns = {
 
 const successAddCard = {
   statusCode: 201,
-  message: {
+  data: {
     id: 14,
     title: '팀 프로젝트 API 명세 작성 4',
     content: '프론트쪽에 알려줄 API 명세서 작성하기 4',
@@ -151,7 +151,7 @@ const successUpdateCard = {
 
 const successGetHistory = {
   statusCode: 200,
-  message: {
+  data: {
     histories: [
       {
         id: 48,

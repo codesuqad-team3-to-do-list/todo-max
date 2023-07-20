@@ -19,7 +19,7 @@ export default function Main({}: Props) {
   useEffect(() => {
     (async () => {
       const columns = await fetchColumns();
-      setColumns(columns.message);
+      setColumns(columns.data);
     })();
   }, []);
 

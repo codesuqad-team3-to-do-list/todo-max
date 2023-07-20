@@ -37,7 +37,7 @@ export default function Sign({ type }: Props) {
 
     try {
       const tokens = await authenticateUser(email, password);
-      storeTokenInLocalStorage(tokens);
+      storeTokenInLocalStorage(tokens.data);
       navigate('/');
     } catch (error) {
       console.error('An error occurred during authentication:', error);
@@ -106,9 +106,8 @@ const authenticateUser = async (email: string, password: string) => {
   }
 
   const data = await response.json();
-  const tokens = data.message;
 
-  return tokens;
+  return data;
 };
 
 const storeTokenInLocalStorage = (tokens: {

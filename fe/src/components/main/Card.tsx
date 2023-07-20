@@ -163,13 +163,13 @@ export default function Card({
       if (type === 'add' && removeAddCard && onAddCard) {
         const addedCardInfo = await requestAddCard();
         removeAddCard();
-        onAddCard(addedCardInfo.message, columnId!);
+        onAddCard(addedCardInfo.data, columnId!);
         return;
       }
 
       if (type === 'edit' && onEditCard) {
-        const { message } = await requestEditCard();
-        onEditCard(message);
+        const { data } = await requestEditCard();
+        onEditCard(data);
         setType('default');
       }
     } catch (err) {
