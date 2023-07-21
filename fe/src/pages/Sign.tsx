@@ -8,12 +8,18 @@ type Type = 'login' | 'signUp';
 
 interface Props {
   type: Type;
+  setUserAccessToken?: (accessToken: string) => void;
+  isLogin?: boolean;
 }
 
-export default function Sign({ type }: Props) {
+export default function Sign({ type, setUserAccessToken, isLogin }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+
+  if (isLogin) {
+    navigate('/main');
+  }
 
   const handleSetEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -38,6 +44,9 @@ export default function Sign({ type }: Props) {
     try {
       const tokens = await authenticateUser(email, password);
       storeTokenInLocalStorage(tokens.data);
+      if (setUserAccessToken) {
+        setUserAccessToken(tokens.data.accessToken);
+      }
       navigate('/');
     } catch (error) {
       console.error('An error occurred during authentication:', error);

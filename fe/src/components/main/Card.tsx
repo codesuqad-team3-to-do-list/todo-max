@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import EditIcon from '../EditIcon';
 import ClosedIcon from '../ClosedIcon';
 import CardContent from './CardContent';
+import { LocalStorageKey } from '../../types/constants';
 
 type Props = {
   cardId?: number;
@@ -72,7 +73,8 @@ export default function Card({
     const options = {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        Authorization:
+          'Bearer ' + localStorage.getItem(LocalStorageKey.AccessToken),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -97,7 +99,8 @@ export default function Card({
     const options = {
       method: 'DELETE',
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        Authorization:
+          'Bearer ' + localStorage.getItem(LocalStorageKey.AccessToken),
         'Content-Type': 'application/json',
       },
     };
@@ -114,7 +117,8 @@ export default function Card({
     const options = {
       method: 'PATCH',
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        Authorization:
+          'Bearer ' + localStorage.getItem(LocalStorageKey.AccessToken),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

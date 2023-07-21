@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Button from '../Button';
 import ConfirmModal from '../ConfirmModal';
 import ClosedIcon from '../ClosedIcon';
+import { LocalStorageKey } from '../../types/constants';
 
 interface Props {
   unmountHistory: () => void;
@@ -15,7 +16,7 @@ export default function History({ unmountHistory }: Props) {
   const [histories, setHistories] = useState<History>();
   const [toggleAnimation, setToggleAnimation] = useState<Toggle>('close');
   const [isOpenDeleteAllModal, setIsOpenDeleteAllModal] = useState(false);
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem(LocalStorageKey.AccessToken);
 
   const fetchHistory = async () => {
     const historyId = histories?.histories[histories.histories.length - 1]?.id;

@@ -4,10 +4,10 @@ import { styled } from 'styled-components';
 import Card from '../components/main/Card';
 
 interface Props {
-  token: string | null;
+  accessToken: string | null;
 }
 
-export default function Main({}: Props) {
+export default function Main({accessToken}: Props) {
   const [columns, setColumns] = useState<Column[]>();
   const [isDragging, setIsDragging] = useState(false);
   const [mousePosition, setMousePosition] = useState<Position>();
@@ -27,7 +27,8 @@ export default function Main({}: Props) {
     const baseUrl = import.meta.env.VITE_APP_BASE_URL;
     const options = {
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        Authorization:
+          'Bearer ' + accessToken,
         'Content-Type': 'application/json',
       },
     };

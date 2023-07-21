@@ -5,15 +5,16 @@ import { Link } from 'react-router-dom';
 
 interface Props {
   isLogin: boolean;
+  setUserAccessToken: (accessToken: string) => void;
 }
 
-export default function Header({ isLogin }: Props) {
+export default function Header({ isLogin, setUserAccessToken }: Props) {
   return (
     <StyledHeader>
-      <Link to={'/'}>
+      <Link to={'/main'}>
         <Logo />
       </Link>
-      <Navbar isLogin={isLogin} />
+      <Navbar isLogin={isLogin} setUserAccessToken={setUserAccessToken} />
     </StyledHeader>
   );
 }
