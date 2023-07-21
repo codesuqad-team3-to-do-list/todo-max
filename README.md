@@ -18,17 +18,20 @@
 
 ## 🖥️ 동작 화면
 
-### 회원가입
-
 ### 로그인
+![로그인](https://github.com/codesuqad-team3-to-do-list/todo-max/assets/86359180/938318f9-4001-4039-be6b-b09dd970873b)
 
 ### 메인 페이지
+![메인 페이지](https://github.com/codesuqad-team3-to-do-list/todo-max/assets/86359180/f3a73a60-476b-4da6-9c66-2c3502fa6173)
 
 ### 카드 생성
+![카드 생성](https://github.com/codesuqad-team3-to-do-list/todo-max/assets/86359180/65683bae-17c7-4540-9da3-835a4007fe93)
 
 ### 카드 삭제
+![카드 삭제](https://github.com/codesuqad-team3-to-do-list/todo-max/assets/86359180/854cced5-6486-44aa-b1e3-2525b6373971)
 
 ### 카드 수정
+![카드 수정](https://github.com/codesuqad-team3-to-do-list/todo-max/assets/86359180/10591ade-237f-4016-be28-46035f2c3d8c)
 
 ## 🔧️ 개발 환경
 
