@@ -14,6 +14,12 @@ type Props = {
   onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
   drag?: 'true' | 'false';
   position?: Position;
+  onRemoveCard?: (cardId: number) => void;
+  removeAddCard?: () => void;
+  onAddCard?: (addedCardInfo: Card, columnId: number) => void;
+  onEditCard?: (editedCardInfo: Card) => void;
+  draggedCardId?: number;
+  setCoordinate?: React.Dispatch<React.SetStateAction<Coordinate>>;
 };
 
 export default function Card({
@@ -24,8 +30,43 @@ export default function Card({
   onMouseDown,
   drag,
   position,
+  onRemoveCard,
+  removeAddCard,
+  onAddCard,
+  onEditCard,
+  draggedCardId,
+  setCoordinate,
 }: Props) {
-  const [type, setType] = useState<Type>('default');
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (cardId && rect && setCoordinate) {
+      setCoordinate((prevCoordinate) => {
+        return {
+          ...prevCoordinate,
+          columns: prevCoordinate?.columns?.map((column) => {
+            if (column.id === columnId) {
+              return {
+                ...column,
+                cards: [
+                  ...(column.cards ?? []),
+                  {
+                    id: cardId,
+                    min: rect.top,
+                    max: rect.bottom,
+                  },
+                ],
+              };
+            }
+            return column;
+          }),
+        };
+      });
+    }
+  }, []);
+
+  const [type, setType] = useState<CardType>(cardType);
   const [titleInput, setTitleInput] = useState('');
   const [bodyTextArea, setBodyTextArea] = useState('');
 
@@ -64,6 +105,7 @@ export default function Card({
       data-card-id={cardId}
       drag={drag}
       position={position}
+      ref={cardRef}
     >
       <StyledCardContainer>
         <StyledTextArea>

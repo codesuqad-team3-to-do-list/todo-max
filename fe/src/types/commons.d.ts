@@ -13,3 +13,18 @@ interface Card {
 }
 
 type Position = { x: number; y: number };
+
+type CardType = 'default' | 'add' | 'edit' | 'drag' | 'place';
+
+interface Coordinate {
+  columns?: {
+    id: number;
+    min: number;
+    max: number;
+    cards?: {
+      id: number;
+      min: number;
+      max: number;
+    }[];
+  }[];
+}

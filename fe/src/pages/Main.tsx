@@ -14,6 +14,85 @@ export default function Main({}: Props) {
   const dragData = useRef<Card>();
   const dragElement = useRef<Element>();
   const startPosition = useRef<Position>();
+  const isMousePressed = useRef<boolean>(false);
+  const [coordinate, setCoordinate] = useState<Coordinate>({});
+
+  useEffect(() => {
+    console.log(coordinate);
+  }, [coordinate]);
+
+  useEffect(() => {
+    (async () => {
+      const columns = await fetchColumns();
+      setColumns(columns.data);
+    })();
+  }, []);
+
+  const fetchColumns = async () => {
+    const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+    const options = {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-Type': 'application/json',
+      },
+    };
+    const url = new URL(`/api/columns`, baseUrl);
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch columns');
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  const onAddCard = (addedCardInfo: Card, columnId: number) => {
+    if (!columns) {
+      return;
+    }
+
+    const updatedColumns = columns.map((column) =>
+      column.columnId === columnId
+        ? { ...column, cards: [addedCardInfo, ...column.cards] }
+        : { ...column }
+    );
+
+    setColumns(updatedColumns);
+  };
+
+  const onRemoveCard = (cardId: number | undefined) => {
+    if (!columns) {
+      return;
+    }
+
+    setColumns((prevColumns) => {
+      if (!prevColumns) {
+        return prevColumns;
+      }
+
+      return prevColumns.map((column) => ({
+        ...column,
+        cards: column.cards.filter((card) => card.id !== cardId),
+      }));
+    });
+  };
+
+  const onEditCard = (editedCardInfo: Card) => {
+    if (!columns) {
+      return;
+    }
+
+    const updatedColumns = columns.map((column) => ({
+      ...column,
+      cards: column.cards.map((card) =>
+        card.id === editedCardInfo.id ? { ...card, ...editedCardInfo } : card
+      ),
+    }));
+
+    setColumns(updatedColumns);
+  };
 
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging(true);
@@ -80,10 +159,13 @@ export default function Main({}: Props) {
         columns.map((column) => (
           <Column
             key={column.columnId}
-            onColumnTitleRename={onColumnTitleRename}
-            onColumnRemove={onColumnRemove}
+            draggedCardId={dragData.current?.id}
             onMouseDown={onMouseDown}
             column={column}
+            onRemoveCard={onRemoveCard}
+            onAddCard={onAddCard}
+            onEditCard={onEditCard}
+            setCoordinate={setCoordinate}
           />
         ))}
 
