@@ -18,7 +18,7 @@ export default function HistoryList({ histories, onEndReach }: Props) {
     const scrollTop = historyList.scrollTop;
     const clientHeight = historyList.clientHeight;
 
-    const isEndReached = scrollTop + clientHeight >= scrollHeight;
+    const isEndReached = Math.ceil(scrollTop) + clientHeight >= scrollHeight;
 
     if (isEndReached) {
       onEndReach();

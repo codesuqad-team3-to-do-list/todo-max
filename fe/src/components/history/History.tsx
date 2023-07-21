@@ -19,7 +19,7 @@ export default function History({ unmountHistory }: Props) {
 
   const fetchHistory = async () => {
     const historyId = histories?.histories[histories.histories.length - 1]?.id;
-    const count = 10;
+    const count = 5;
     const path = historyId
       ? `api/histories?historyId=${historyId}&count=${count}`
       : `api/histories`;
@@ -46,7 +46,11 @@ export default function History({ unmountHistory }: Props) {
       const history = await fetchHistory();
 
       if (histories) {
-        setHistories({ ...histories, ...history.data });
+        const newHistories = {
+          histories: [...histories.histories, ...history.data.histories],
+          hasNext: history.data.hasNext,
+        } as History;
+        setHistories(newHistories);
 
         return;
       }
